@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">SPECTRA 24</string>
+    <string name="service_channel">SPECTRA bağlantısı</string>
+    <string name="alert_channel">RF alan uyarıları</string>
+</resources>

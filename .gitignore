@@ -1,0 +1,32 @@
+**/.pio/
+**/.gradle/
+**/build/
+**/local.properties
+**/__pycache__/
+.run/
+# Local outputs: publish selected binaries through GitHub Releases, not source git.
+/release/*
+!/release/README.md
+*.apk
+*.aab
+*.bin
+*.elf
+*.py[cod]
+*.log
+*.pid
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+# Personal configuration and signing material
+.env
+.env.*
+*.jks
+*.keystore
+*.p12
+*.pem
+*.key
+key.properties
+keystore.properties
+.agents/
+.codex/
