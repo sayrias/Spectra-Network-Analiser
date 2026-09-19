@@ -1,8 +1,11 @@
 # Üçüncü taraf bileşenler
 
-Projenin kendi kaynak lisansı henüz seçilmemiştir. Bu bildirim, üçüncü taraf
-lisanslarının yerine geçmez. Kaynak kodu ve ikili dosya dağıtımında ilgili
-bileşenlerin lisans dosyalarını koruyun.
+[![Ana rehber](docs/assets/guide.svg)](README.md)
+
+Projenin özgün kodu ve belgeleri [PolyForm Noncommercial 1.0.0](LICENSE.md)
+ile sunulur. Aşağıdaki üçüncü taraf bileşenler kendi lisanslarını korur;
+proje lisansı onları yeniden lisanslamaz. Kaynak ve ikili dosya dağıtımında
+ilgili bileşenlerin lisans dosyalarını koruyun.
 
 ## Depoda bulunan dosyalar
 

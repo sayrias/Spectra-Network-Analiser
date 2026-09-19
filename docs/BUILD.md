@@ -1,5 +1,10 @@
 # Derleme ve geliştirme rehberi
 
+[![Ana rehber](assets/guide.svg)](../README.md)
+[![Testler](assets/tests.svg)](TEST-NOTLARI.md)
+
+**SPECTRA 24 v1.0.0** — önce araçları kontrol edin, sonra hedefinizi seçin.
+
 Tüm örnekler proje kökünden çalışır. `build.sh`, başka bir çalışma dizininden
 tam yoluyla çağrıldığında da doğru proje üzerinde çalışır. Linux/Bash iş akışı
 desteklenir; Windows'ta Android Studio/Gradle ve PlatformIO ayrı kullanılabilir,
@@ -88,11 +93,12 @@ Test PID kaydı varsa önce `./build.sh stop` gerekir. Derleme/emülatör çalı
 temizlik yapmayın. Kaynak, SDK, kullanıcı genel Gradle/PlatformIO önbelleği ve
 local.properties korunur. Sonraki derleme proje bağımlılıklarını yeniden hazırlayabilir.
 
-## Paylaşım kontrol listesi
+## Dağıtım kontrol listesi
 
 - `./build.sh test` ve mümkünse `./build.sh test-full` çalıştırın.
-- Kaynak kod için proje sahibinin seçtiği `LICENSE` / `LICENSE.md` dosyasını ekleyin.
-  Font Awesome'un mevcut lisansını ve üçüncü taraf bildirimlerini koruyun.
+- [LICENSE.md](../LICENSE.md) dosyasını, Font Awesome lisansını ve
+  [üçüncü taraf bildirimlerini](../THIRD_PARTY_NOTICES.md) koruyun.
+  Projenin ticari olmayan kullanım koşullarına uyun; [lisans özetini](LISANS.md) okuyun.
 - Kişisel ağ adı, parola, cihaz adresi, kayıt ve ekran görüntülerini gözden geçirin.
   `.gitignore` tek başına sır tarayıcı değildir; önceden Git'e eklenen dosyaları silmez.
 - `./build.sh package` ile temiz kaynak arşivini üretip içeriğini inceleyin.
@@ -105,3 +111,39 @@ local.properties korunur. Sonraki derleme proje bağımlılıklarını yeniden h
 
 Eski kök `build_android.sh`, `test.sh`, `run_android_test.sh` vb. komutların
 uygulamaları artık `scripts/` altındadır. Yeni ortak giriş noktası `./build.sh`.
+
+## Sürüm ve güncelleme
+
+Görünen Android sürümü ve firmware bildirimi **1.0.0**'dır. Android'in dahili
+`versionCode` değeri **10** tutulur: daha önceki geliştirme APK'larının üzerine
+aynı imzayla güncelleme yapılabilmesi için bu sayaç geriye alınmaz. Protokol
+sürümü **2** olarak kalır; ürün sürümüyle aynı kavram değildir.
+
+## Sık karşılaşılan durumlar
+
+<details>
+<summary><strong>SDK bulunamadı veya Java hatası</strong></summary>
+
+`./build.sh doctor` çalıştırın. JDK 17 önerilir; Java ve javac erişilebilir
+olmalıdır. SDK kuruluysa ortam değişkenlerini kontrol edin; yoksa
+`./build.sh setup` kullanın.
+
+</details>
+
+<details>
+<summary><strong>APK güncellemesinde imza uyuşmazlığı</strong></summary>
+
+Önceki APK ile aynı imzalama anahtarını kullanın. Farklı bilgisayarların debug
+anahtarları farklı olabilir. Uygulamayı kaldırmak kayıtlı ayar ve günlükleri
+siler; bunu otomatik bir çözüm olarak uygulamayın.
+
+</details>
+
+<details>
+<summary><strong>ESP32 Wi-Fi ağı internetsiz görünüyor</strong></summary>
+
+Bu beklenen davranıştır; ESP32 doğrudan bağlantısı yerel ölçüm içindir.
+Android'in bağlantıyı koruma isteğini onaylayın.
+[Bağlantı rehberine](../android-app/README.md) bakın.
+
+</details>

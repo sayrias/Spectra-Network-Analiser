@@ -98,7 +98,7 @@ class SpectraHandler(socketserver.BaseRequestHandler):
         if action == "hello":
             self.send_json({
                 "type": "hello", "protocol": 2, "device": "SPECTRA-24-DEMO",
-                "firmware": "synthetic-demo-2.0", "radio": True, "demo": True,
+                "firmware": "synthetic-demo-1.0.0", "radio": True, "demo": True,
                 "settings": STATE.settings_copy(),
             })
         elif action == "ping":

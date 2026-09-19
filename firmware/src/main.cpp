@@ -302,7 +302,7 @@ void sendStatus(bool notify) {
   JsonDocument doc;
   doc["type"] = "status";
   doc["device"] = "SPECTRA-24";
-  doc["firmware"] = "3.5.0";
+  doc["firmware"] = "1.0.0";
   doc["radio"] = radioReady;
   doc["calibrating"] = calibrationSweeps < Config::CALIBRATION_SWEEPS;
   doc["calibration"] = calibrationPercent();
@@ -340,7 +340,7 @@ void sendHello() {
   JsonDocument doc;
   doc["type"] = "hello";
   doc["device"] = "SPECTRA-24";
-  doc["firmware"] = "3.5.0";
+  doc["firmware"] = "1.0.0";
   doc["radio"] = radioReady;
   doc["protocol"] = 2;
   doc["spectrumPort"] = Config::SPECTRUM_PORT;
@@ -509,7 +509,7 @@ void serviceDiscovery() {
   JsonDocument doc;
   doc["type"] = "discovery";
   doc["device"] = "SPECTRA-24";
-  doc["firmware"] = "3.5.0";
+  doc["firmware"] = "1.0.0";
   doc["ip"] = WiFi.status() == WL_CONNECTED ? WiFi.localIP().toString() : WiFi.softAPIP().toString();
   doc["apIp"] = WiFi.softAPIP().toString();
   doc["sta"] = WiFi.status() == WL_CONNECTED;

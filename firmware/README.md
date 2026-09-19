@@ -1,4 +1,7 @@
-# SPECTRA 24 firmware v3.5.0
+# SPECTRA 24 firmware v1.0.0
+
+[![Ana rehber](../docs/assets/guide.svg)](../README.md)
+[![Protokol](../docs/assets/protocol.svg)](docs/PROTOCOL.md)
 
 ESP32-WROOM-32D ve EBYTE E01-ML01DP5 (nRF24L01P + PA/LNA) için pasif 2,4 GHz
 alan gözlem firmware'i. HTTP sunucusu yoktur; Android uygulaması TCP/UDP veya
@@ -28,8 +31,8 @@ waterfall çizgileri veya `nRF24 NOT FOUND` sonucu oluşturabilir.
 - nRF24, 0–125 kanallarını ayrı bir görevde sürekli tarar; her kanal varsayılan
   4 RPD örneğinden 0–100 doluluk değerine dönüşür. Uygulamadan 8/12 seçilebilir.
   Her örnekte RX yerleşmesi ve RPD algılama için 180 µs beklenir.
-  v3.2 hızlı mod seri testinde 7,0–7,5 tam tarama/sn gözlenmiştir;
-  telefonun uçtan uca aktarım hızı değildir. RF bekleme süresi korunur.
+  Gerçek hız örnek sayısına, envanter taramasına ve bağlantı koşullarına bağlıdır;
+  sabit bir telefon kare hızı vaat edilmez. RF bekleme süresi korunur.
 - Açılışta 20 tam sweep ile bulunduğu yerin taban profili ölçülür. Bu sırada
   alarm kapalıdır.
 - Alarm için taban üstü artışın ayarlanan sayıda kanalda, en az beş ayrı RF
@@ -44,7 +47,7 @@ waterfall çizgileri veya `nRF24 NOT FOUND` sonucu oluşturabilir.
 - Trafik sayaçları nominal 500 ms aralıkla gönderilir; paket/sn ve bayt/sn
   hesapları gerçek `windowMs` süresini kullanır. BLE ile ortak radyo çalışması
   için Wi-Fi modem tasarrufu `WIFI_PS_MIN_MODEM` olarak korunur; TCP bağlantısı
-  bu ayarı değiştirmez (3.2.1 bağlantı kararlılığı düzeltmesi).
+  bu ayarı değiştirmez.
 - Durum mesajlarında atlanan ölçüm ve UDP gönderim hata sayaçları bulunur.
   Bunlar kayıp ağ paketlerinin veya aktarılmış dosya boyutlarının ölçümü değildir.
 

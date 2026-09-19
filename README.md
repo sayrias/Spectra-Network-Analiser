@@ -1,15 +1,40 @@
-# SPECTRA 24
+<p align="center">
+  <img src="docs/assets/hero.svg" alt="SPECTRA 24 — RF Field Studio — v1.0.0" width="1100">
+</p>
 
-**2,4 GHz radyo ortamını telefondan gözlemleyin.**
+<h1 align="center">SPECTRA 24</h1>
+
+<p align="center"><strong>2,4 GHz radyo ortamını telefondan gözlemleyin.</strong><br>
+Canlı waterfall · Wi-Fi ve BLE envanteri · Ayarlanabilir RF uyarıları</p>
+
+<p align="center">
+  <a href="https://github.com/sayrias/Spectra-Network-Analiser"><img src="docs/assets/repo.svg" alt="Proje deposu" width="180"></a>
+  <a href="https://github.com/sayrias/Spectra-Network-Analiser/releases"><img src="docs/assets/releases.svg" alt="Sürümler" width="180"></a>
+  <a href="https://github.com/sayrias/Spectra-Network-Analiser/issues"><img src="docs/assets/issues.svg" alt="Hata bildir / öneri gönder" width="180"></a>
+</p>
+
+<p align="center">
+  <a href="docs/BUILD.md"><img src="docs/assets/guide.svg" alt="Başlangıç rehberi" width="230"></a>
+  <a href="android-app/README.md"><img src="docs/assets/android.svg" alt="Android uygulaması" width="230"></a>
+  <a href="firmware/README.md"><img src="docs/assets/hardware.svg" alt="Donanım ve firmware" width="230"></a>
+</p>
+<p align="center">
+  <a href="firmware/docs/PROTOCOL.md"><img src="docs/assets/protocol.svg" alt="Haberleşme protokolü" width="230"></a>
+  <a href="docs/TEST-NOTLARI.md"><img src="docs/assets/tests.svg" alt="Test ve sürüm notları" width="230"></a>
+  <a href="docs/LISANS.md"><img src="docs/assets/license.svg" alt="Lisans ve kullanım koşulları" width="230"></a>
+</p>
+
+---
+
+## Bir bakışta
 
 ESP32-WROOM-32D ve nRF24 tabanlı ölçüm cihazı; yerel Android uygulamasında
 canlı waterfall, Wi-Fi/BLE envanteri ve gözlenen kablosuz trafik istatistikleri.
 Turuncu-siyah arayüz, uygulamaya özel ayrıntı pencereleri ve ayarlanabilir RF uyarıları.
 
-**Android 8.0+ · Wi-Fi + Bluetooth LE · PlatformIO · Sürüm 3.5.0**
-
-[Kurulum ve derleme](docs/BUILD.md) · [Donanım](firmware/README.md) ·
-[Protokol](firmware/docs/PROTOCOL.md) · [Test/sürüm geçmişi](docs/TEST-NOTLARI.md)
+| Sürüm | Telefon | Ölçüm cihazı | Bağlantı |
+| --- | --- | --- | --- |
+| **v1.0.0** | Android 8.0 ve üzeri | ESP32-WROOM-32D + E01-ML01DP5 | Wi-Fi / Bluetooth LE |
 
 ## Neler yapar?
 
@@ -65,6 +90,25 @@ modül yanında 100 nF + 10–47 µF kondansatör önerilir.
 [Donanım ve firmware ayrıntıları](firmware/README.md).
 
 ## Hızlı başlangıç
+
+### Hazır APK ile
+
+İmzalı APK yayımlandığında [Sürümler](https://github.com/sayrias/Spectra-Network-Analiser/releases)
+sayfasından indirip telefona kurabilirsiniz; Android projesini derlemeniz gerekmez.
+Kaynak ZIP'i APK değildir. `unsigned.apk` dosyaları imzalanmadan kurulamaz.
+
+1. Donanımı yukarıdaki pin tablosuna göre bağlayın.
+2. Kendi ESP32'nize bu projenin uyumlu firmware'ini yükleyin.
+3. APK'yı kurup gerekli Android izinlerini verin; **Hızlı Wi-Fi** veya
+   **Bluetooth** ile kendi cihazınıza bağlanın.
+
+Her kullanıcı **aynı APK'yı** kullanabilir; uygulama belirli bir ESP32 MAC'ine
+kilitli değildir. `192.168.4.1`, her cihazın kendi oluşturduğu yerel ağ adresidir,
+geliştiricinin internet adresi değildir. Hotspot/LAN IP'si keşif veya elle girişle
+kullanılır. Birden fazla SPECTRA aynı ortamdaysa otomatik seçime güvenmeyin;
+ilk kurulumda yalnız hedef cihazı açın.
+
+### Kaynaktan derleyerek
 
 Linux üzerinde Bash, **JDK 17** (önerilen), **Python 3.10+** ve PlatformIO Core
 gereklidir. Android için SDK 35 ve Build Tools 35.0.0 kullanılır. Gradle
@@ -138,18 +182,51 @@ SPECTRA24/
 
 [Ayrıntılı dosya düzeni](docs/DOSYA-DUZENI.md).
 
-## GitHub'da paylaşma
+## Rehberler
+
+| Belge | İçerik |
+| --- | --- |
+| [Kurulum ve derleme](docs/BUILD.md) | Gereksinimler, menü, APK, yükleme, test ve sorun giderme |
+| [Android kullanım rehberi](android-app/README.md) | Bağlantı, izinler, geçmiş, ses ve titreşim |
+| [Donanım rehberi](firmware/README.md) | Pin bağlantıları, besleme ve firmware davranışı |
+| [Protokol referansı](firmware/docs/PROTOCOL.md) | JSON komutları, ikili ölçüm çerçevesi ve BLE |
+| [v1.0.0 test notları](docs/TEST-NOTLARI.md) | Doğrulama kapsamı ve henüz sınanmamış koşullar |
+| [Proje düzeni](docs/DOSYA-DUZENI.md) | Dosya ve klasörlerin görevleri |
+| [Geliştirici araçları](tools/README.md) | Simülatör, model ve arayüz regresyon testleri |
+| [Çıktı rehberi](release/README.md) | APK, firmware ve kaynak paketi |
+| [İndirme ve kurulum](docs/RELEASE.md) | APK edinme, donanım hazırlığı, ilk bağlantı ve güncelleme |
+| [Lisans özeti](docs/LISANS.md) | Ticari olmayan kullanım ve üçüncü taraf ayrımı |
+| [Üçüncü taraf bildirimleri](THIRD_PARTY_NOTICES.md) | Font, araç ve bağımlılık kaynakları |
+
+## Kaynak paketi
 
 `./build.sh package`, `release/SPECTRA24-source.tar.gz` oluşturur. Paket;
 kaynakları, testleri, belgeleri, font lisansını ve gerekli Gradle Wrapper JAR'ını
 içerir. APK/BIN, kişisel SDK yolu, önbellekler, test kayıtları ve ekran görüntüleri
-dahil edilmez. APK dağıtımını kaynak deposundan ayrı, GitHub Releases üzerinden
-yapabilirsiniz. Paketleyici otomatik olarak GitHub'a hiçbir şey yüklemez.
+dahil edilmez. Hazır uygulama dosyaları için
+[Sürümler](https://github.com/sayrias/Spectra-Network-Analiser/releases), ilk kullanım
+için [İndirme ve kurulum](docs/RELEASE.md) rehberine bakın.
 
-Yayımlamadan önce [paylaşım kontrol listesini](docs/BUILD.md#paylaşım-kontrol-listesi)
-uygulayın. Bu depoda proje sahibinin seçtiği bir **kaynak kod lisansı henüz yok**;
-lisans kararı proje sahibine bırakılmıştır. Üçüncü taraf bildirimleri
-[THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) içindedir.
+Paketin içinde lisans ve belge görselleri de bulunur. Paylaşırken
+[dağıtım kontrol listesini](docs/BUILD.md#dağıtım-kontrol-listesi) uygulayın.
+
+## Lisans
+
+**PolyForm Noncommercial 1.0.0.** Projenin özgün kodunu ve belgelerini lisansın
+izin verdiği ticari olmayan amaçlarla kullanabilir, inceleyebilir, değiştirebilir
+ve paylaşabilirsiniz. Ticari kullanım bu lisansla verilmez; ayrıca hak sahibinden
+izin gerekir. Lisans ve gerekli bildirimler dağıtımlarda korunmalıdır.
+
+Bu proje ticari kısıt nedeniyle **source-available** olarak sunulur; sınırsız
+açık kaynak kullanım izni vaat etmez. Üçüncü taraf bileşenler kendi lisanslarını
+korur. İzin verilen amaçların ve kuruluşların tam tanımı için lisans metni esastır.
+
+<p>
+  <a href="LICENSE.md"><img src="docs/assets/license.svg" alt="PolyForm Noncommercial — tam lisans metni" width="260"></a>
+</p>
+
+[Türkçe kullanım özeti](docs/LISANS.md) ·
+[Resmî lisans kaynağı](https://polyformproject.org/licenses/noncommercial/1.0.0)
 
 ## Güvenli kullanım
 

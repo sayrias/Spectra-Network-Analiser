@@ -1,5 +1,10 @@
 # SPECTRA 24 Android uygulaması
 
+[![Ana rehber](../docs/assets/guide.svg)](../README.md)
+[![Derleme](../docs/assets/android.svg)](../docs/BUILD.md)
+
+**v1.0.0 · versionCode 10 · Yerel Android arayüzü**
+
 Bağımsız yerel Android uygulamasıdır; ESP32 içinde site ve uygulamada WebView
 yoktur. Hedef Android 15 (API 35), minimum Android 8.0'dır (API 26).
 
@@ -16,6 +21,20 @@ yoktur. Hedef Android 15 (API 35), minimum Android 8.0'dır (API 26).
 - Hassas, dengeli ve sakin algılama profilleri; ayrıntılı eşik/süre ayarları
 - Seçilebilir telefon tonu, ses düzeyi, titreşim ve tekrar bekleme süresi
 - Elle yeniden kalibrasyon ve canlı kaynak etiketi
+
+## Ekran haritası
+
+| Ekran | Ne için kullanılır? |
+| --- | --- |
+| Genel | RF özeti, waterfall, trafik ve olay geçmişi |
+| Spektrum | Geçmiş inceleme, tepe izi, duraklatma ve tam ekran |
+| Bağlantı | Wi-Fi/BLE keşif, hotspot ve bağlantı istatistikleri |
+| Çevre radarı | Kategori seçimi, cihaz ayrıntıları, takma ad ve CSV |
+| Ayarlar | Algılama profili, tarama örnekleri, ses ve titreşim |
+
+Waterfall'daki bilgi düğmesi ölçümün nasıl yorumlanacağını açıklar.
+Tam ekran aynı nokta boyutuyla daha fazla geçmiş gösterir; henüz ölçülmemiş
+alan doldurulmaz. Çift dokunma canlı görünüme döndürür.
 
 ## Bağlanma
 

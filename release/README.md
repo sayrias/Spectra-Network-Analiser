@@ -1,5 +1,9 @@
 # Yerel çıktılar
 
+[![Derleme rehberi](../docs/assets/guide.svg)](../docs/BUILD.md)
+
+**SPECTRA 24 v1.0.0** — ürün sürümü APK içinde ve firmware durum mesajında yer alır.
+
 Bu klasördeki dosyalar yeniden üretilir; kaynak deposuna eklenmez.
 
 - `./build.sh android` → `SPECTRA24-debug.apk` (test için imzalı).

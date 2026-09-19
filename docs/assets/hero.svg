@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="320" viewBox="0 0 1100 320" role="img" aria-labelledby="title desc">
+  <title id="title">SPECTRA 24 — RF Field Studio — v1.0.0</title>
+  <desc id="desc">ESP32 ve nRF24 ile canlı RF gözlemi. Android, Wi-Fi ve Bluetooth LE. Ticari olmayan kullanım.</desc>
+  <defs>
+    <linearGradient id="bg" x2="1" y2="1"><stop stop-color="#191d24"/><stop offset="1" stop-color="#090c11"/></linearGradient>
+    <linearGradient id="accent"><stop stop-color="#ff8730"/><stop offset="1" stop-color="#ffcf91"/></linearGradient>
+    <pattern id="grid" width="36" height="36" patternUnits="userSpaceOnUse"><path d="M36 0H0V36" fill="none" stroke="#2b303a" stroke-width=".7"/></pattern>
+  </defs>
+  <rect x="1" y="1" width="1098" height="318" rx="26" fill="url(#bg)" stroke="#333944"/>
+  <rect x="610" y="20" width="460" height="280" rx="20" fill="url(#grid)" opacity=".55"/>
+  <circle cx="925" cy="152" r="112" fill="none" stroke="#ff8a32" opacity=".12"/>
+  <circle cx="925" cy="152" r="76" fill="none" stroke="#ff8a32" opacity=".18"/>
+  <circle cx="925" cy="152" r="40" fill="none" stroke="#ff8a32" opacity=".25"/>
+  <path d="M710 171h56v-20h38v20h31v-67h32v105h31v-38h47v-16h30v16h53" fill="none" stroke="url(#accent)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+  <rect x="42" y="37" width="38" height="5" rx="2.5" fill="#ff8a32"/>
+  <text x="42" y="74" font-family="Arial, sans-serif" font-size="14" letter-spacing="4" fill="#ffad6b">RF FIELD STUDIO / 24</text>
+  <text x="38" y="152" font-family="Arial, sans-serif" font-size="68" font-weight="700" letter-spacing="-2" fill="#fff4e8">SPECTRA 24</text>
+  <text x="42" y="190" font-family="Arial, sans-serif" font-size="20" fill="#b8c0cc">Canlı RF gözlemi. Tek bir arayüz.</text>
+  <rect x="42" y="229" width="90" height="34" rx="17" fill="#ff8a32"/>
+  <text x="87" y="251" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" font-weight="700" fill="#17120e">v1.0.0</text>
+  <rect x="142" y="229" width="149" height="34" rx="17" fill="#20262e" stroke="#3b4552"/>
+  <text x="216" y="251" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" fill="#dae1e9">ANDROID 8.0+</text>
+  <rect x="301" y="229" width="149" height="34" rx="17" fill="#20262e" stroke="#3b4552"/>
+  <text x="375" y="251" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" fill="#dae1e9">Wi-Fi + BLE</text>
+  <text x="710" y="264" font-family="Arial, sans-serif" font-size="12" fill="#a8afb9" letter-spacing="2">ESP32 + nRF24 / 2.4 GHz</text>
+</svg>

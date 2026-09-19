@@ -1101,7 +1101,7 @@ public final class MainActivity extends Activity {
                 if(action==0)sendDeviceCommand("{\"action\":\"scan\"}");
                 else if(action==1)exportDevices();
                 else if(action==2)showSheet("Tek seferlik BLE ad sorgulaması",text("Yalnız scan-response içinde yayınlanan adlar okunabilir. Cihazlarla bağlantı veya eşleştirme yapılmaz.",12,MUTED,false),"Sorgula",()->sendDeviceCommand("{\"action\":\"scanNames\"}"));
-                else showSheet("Etiket ve beacon gözlemi",text(BleSignals.caveat()+"\n\nAirTag / Find My ve iBeacon filtreleri firmware 3.5.0 ile gelen paket başlığına ihtiyaç duyar. Eski firmware'de Apple şirket kimliği tek başına yeterli değildir. Sensör filtresi 180D veya 181A servis beyanını kullanır. Bu uygulama takip edilme tespiti garantisi vermez.",12,MUTED,false),null,null);
+                else showSheet("Etiket ve beacon gözlemi",text(BleSignals.caveat()+"\n\nAirTag / Find My ve iBeacon filtreleri firmware 1.0.0 ile gelen paket başlığına ihtiyaç duyar. Eski firmware'de Apple şirket kimliği tek başına yeterli değildir. Sensör filtresi 180D veya 181A servis beyanını kullanır. Bu uygulama takip edilme tespiti garantisi vermez.",12,MUTED,false),null,null);
             });choices.addView(b,new LinearLayout.LayoutParams(-1,dp(48)));
         }
         menu[0]=showSheet("Radar işlemleri",choices,null,null);
@@ -1138,7 +1138,7 @@ public final class MainActivity extends Activity {
         if(d.has("ch"))detail.append("\nKanal: ").append(d.optInt("ch"));
         if(!wifi)detail.append("\nBLE servisleri: ").append(DeviceMetadata.services(d.optString("services")));
         if(!wifi){detail.append("\nYayın sınıfı: ").append(BleSignals.label(bleKind(d)));
-            detail.append("\nİmza kanıtı: ").append(d.has("mfgPrefix")?d.optString("mfgPrefix")+" · "+d.optInt("mfgLength")+" bayt · "+d.optLong("signatureAgeMs")/1000+" sn önce":"Firmware imza başlığı göndermiyor; 3.5.0 gerekir");
+            detail.append("\nİmza kanıtı: ").append(d.has("mfgPrefix")?d.optString("mfgPrefix")+" · "+d.optInt("mfgLength")+" bayt · "+d.optLong("signatureAgeMs")/1000+" sn önce":"Firmware imza başlığı göndermiyor; 1.0.0 gerekir");
             if(bleKind(d)!=BleSignals.UNKNOWN)detail.append("\n").append(BleSignals.caveat());}
         if(!wifi)detail.append("\nŞirket kimliği: ").append(DeviceMetadata.manufacturer(d.optInt("manufacturer")))
             .append("\nKimlik sınırı: Şirket kimliği yayıncının beyanıdır; doğrulanmış marka, model veya cihaz sahibi değildir.");
@@ -1460,7 +1460,7 @@ public final class MainActivity extends Activity {
         @Override public long getItemId(int position){return position;}
         @Override public View getView(int position,View convertView,ViewGroup parent){
             JSONObject d=visibleDevices().optJSONObject(position);if(d==null){
-                TextView empty=text(deviceCategory>=3?"Bu filtreyle eşleşen yayın yok. Find My / iBeacon için firmware 3.5.0 gerekir. Eşleşme olmaması etiket bulunmadığını kanıtlamaz.":"Henüz gözlem alınmadı. İşlemler menüsünden taramayı yenileyin. Trafik yalnız mevcut kanalı gösterir.",12,MUTED,false);
+                TextView empty=text(deviceCategory>=3?"Bu filtreyle eşleşen yayın yok. Find My / iBeacon için firmware 1.0.0 gerekir. Eşleşme olmaması etiket bulunmadığını kanıtlamaz.":"Henüz gözlem alınmadı. İşlemler menüsünden taramayı yenileyin. Trafik yalnız mevcut kanalı gösterir.",12,MUTED,false);
                 empty.setPadding(dp(16),dp(22),dp(16),dp(22));return empty;
             }
             LinearLayout shell=vertical();shell.setPadding(0,dp(4),0,dp(4));

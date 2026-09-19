@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="260" height="72" viewBox="0 0 260 72" role="img" aria-labelledby="title desc">
+  <title id="title">PROJE DÜZENİ</title><desc id="desc">KAYNAKLAR VE ARAÇLAR</desc>
+  <rect x="1" y="1" width="258" height="70" rx="16" fill="#16191e" stroke="#343941"/>
+  <rect x="1" y="18" width="4" height="36" rx="2" fill="#ff8a32"/>
+  <text x="19" y="30" fill="#fff4e8" font-family="Arial, sans-serif" font-size="13" font-weight="700">PROJE DÜZENİ</text>
+  <text x="19" y="49" fill="#a8afb9" font-family="Arial, sans-serif" font-size="9" letter-spacing=".65">KAYNAKLAR VE ARAÇLAR</text>
+  <path d="M232 31l5 5-5 5m-8-5h12" fill="none" stroke="#ff8a32" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

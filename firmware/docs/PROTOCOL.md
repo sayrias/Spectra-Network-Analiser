@@ -1,6 +1,14 @@
 # SPECTRA 24 uygulama protokolü v2
 
-## Firmware 3.5 ek alanları (geriye uyumlu)
+[![Ana rehber](../../docs/assets/guide.svg)](../../README.md)
+[![Donanım](../../docs/assets/hardware.svg)](../README.md)
+
+**Ürün / firmware v1.0.0 · İkili protokol v2**
+
+Ürün sürümü ve veri protokolü bağımsızdır. v1.0.0 adlandırması protokol
+baytını, UUID'leri veya portları değiştirmez.
+
+## BLE yayın başlıkları ve canlı ayarlar
 
 BLE envanterindeki `mfgPrefix` üretici alanının en fazla ilk 4 baytının küçük
 harfli hex karşılığıdır (şirket kimliği dahil). `mfgLength` orijinal bayt sayısı,
@@ -99,18 +107,18 @@ PC simülatörü UDP yerine aynı alanları taşıyan `spectrum` JSON'u göndere
 Bu yalnızca açıkça seçilen sentetik DEMO modudur ve gerçek cihaz protokolüne
 kendiliğinden geri dönüş olarak kullanılmaz.
 
-## Firmware v3 ekleri (ikili protokol hâlâ v2)
+## Durum ve envanter alanları
 
-v3.2: `status.skippedSweeps` son-ölçüm kuyruğundan alınamayan ara taramaları;
+`status.skippedSweeps` son-ölçüm kuyruğundan alınamayan ara taramaları;
 `udpSendErrors` başarısız yerel UDP `endPacket` çağrılarını sayar (alıcı teslim
-onayı değildir). `wifiPowerSave` modem tasarrufu durumunu belirtir. 3.2.1'de
+onayı değildir). `wifiPowerSave` modem tasarrufu durumunu belirtir;
 BLE uyumluluğu için açık tutulur; TCP bunu değiştirmez.
 `flowIntervalMs=500` nominal sayaç gönderim aralığıdır;
 oran hesabında her zaman gerçek `flow.windowMs` kullanılmalıdır.
 İkili spektrum biçimi ve CRC değişmedi. Görev daha seyrek yield eder;
 180 µs RF bekleme ve 4/8/12 örnek seçenekleri korunur.
 
-v3.1: `scanNames` tek seferlik aktif BLE taraması kuyruğa alır; `name_scan`
+`scanNames` tek seferlik aktif BLE taraması kuyruğa alır; `name_scan`
 yanıtı isteğin kabulünü belirtir, bir ad bulunduğu anlamına gelmez.
 `ble.devices[].appearance` yayınlanan Bluetooth SIG Appearance değeridir;
 0 bilinmiyor anlamındadır. Cihaz kimliği doğrulanmış değildir.

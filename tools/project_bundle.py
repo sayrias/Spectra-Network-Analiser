@@ -23,7 +23,7 @@ FILES = (
     'android-app/app/build.gradle', 'android-app/app/proguard-rules.pro',
 )
 TREES = {
-    'scripts': {'.sh'}, 'tools': {'.py', '.java', '.md'}, 'docs': {'.md'},
+    'scripts': {'.sh'}, 'tools': {'.py', '.java', '.md'}, 'docs': {'.md', '.svg'},
     'firmware/src': {'.cpp', '.h'}, 'firmware/docs': {'.md'},
     'android-app/app/src': {'.java', '.xml', '.ttf', '.txt'},
 }
@@ -112,7 +112,7 @@ def package(root):
     print(f'[OK] {len(sources)} kaynak dosyası: {archive}')
     print(f'[OK] SHA-256: {checksum}')
     print('SDK, local.properties, APK/BIN, kayıtlar ve önbellekler pakete dahil edilmedi.')
-    print('Yayımlamadan önce kaynak lisansını seçin ve dosyaları gözden geçirin.')
+    print('Paylaşırken LICENSE.md ve üçüncü taraf bildirimlerini koruyun.')
 
 
 def clean(root, dry_run=False, yes=False):

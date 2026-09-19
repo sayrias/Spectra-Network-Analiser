@@ -1,5 +1,14 @@
 # Geliştirme ve test araçları
 
+[![Ana rehber](../docs/assets/guide.svg)](../README.md)
+[![Test kapsamı](../docs/assets/tests.svg)](../docs/TEST-NOTLARI.md)
+
+**v1.0.0** için doğrulama araçları. `ui_v*` dosyalarının adları geliştirme
+dönemindeki test gruplarını belirtir; ürünün güncel sürümü değildir.
+
+`test_docs.py`, göreli belge/görsel bağlantılarını, SVG yapısını, lisansın
+pakete alınmasını ve Android/firmware/belge sürüm tutarlılığını kontrol eder.
+
 - `device_simulator.py`: yalnız etiketli DEMO; gerçek radyo ölçümü değildir.
 - `*SelfTest.java`: protokol, geçmiş, performans, metadata ve BLE imza birim testleri.
   Kökte `./build.sh test` hepsini derleyip çalıştırır.
