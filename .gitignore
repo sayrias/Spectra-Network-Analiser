@@ -6,7 +6,7 @@
 .run/
 # Local outputs: publish selected binaries through GitHub Releases, not source git.
 /release/*
-!/release/README.md
+/dist/
 *.apk
 *.aab
 *.bin

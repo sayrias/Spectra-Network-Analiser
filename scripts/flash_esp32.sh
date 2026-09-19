@@ -65,9 +65,9 @@ echo "ESP32 portu: $PORT"
 echo "Güvenli yükleme hızı: 115200 baud"
 "$PIO" run --project-dir "$FIRMWARE_DIR" --target upload --upload-port "$PORT"
 
-mkdir -p "$PROJECT_DIR/release"
+mkdir -p "$PROJECT_DIR/dist"
 install -m 0644 "$FIRMWARE_DIR/.pio/build/esp32doit-devkit-v1/firmware.bin" \
-  "$PROJECT_DIR/release/spectra24-esp32.bin"
+  "$PROJECT_DIR/dist/spectra24-esp32.bin"
 
 echo "Firmware başarıyla yüklendi."
 if $MONITOR_AFTER_UPLOAD; then

@@ -20,7 +20,7 @@ pakete alınmasını ve Android/firmware/belge sürüm tutarlılığını kontro
 
 Önce `./build.sh emulator`, sonra istenen `python3 tools/ui_…_smoke.py`.
 Arayüz testlerini aynı emülatörde paralel çalıştırmayın.
-Test görselleri `release/screenshots/`, günlükler `.run/` altında oluşur.
+Test görselleri `.run/screenshots/`, günlükler `.run/` altında oluşur.
 Testler yalnız `emulator-*` ADB hedeflerini kabul eder.
 
 `project_bundle.py`: açık kaynak-dosya listesiyle paylaşım arşivi ve yalnız

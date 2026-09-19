@@ -18,8 +18,8 @@
 - `THIRD_PARTY_NOTICES.md`: bağımlılık ve font lisansı kaynakları.
 - `LICENSE.md`: PolyForm Noncommercial 1.0.0 tam metni.
 - `docs/assets/`: README başlığı ve bağlantı düğmeleri; çevrimdışı çalışan SVG'ler.
-- `release/`: yerel APK/BIN ve kaynak arşivleri; yalnız README Git'e dahil edilir.
-- `release/screenshots/`: testte yeniden oluşturulan görseller; paylaşım paketine girmez.
+- `dist/`: yerel APK/BIN ve kaynak arşivleri; dizinin tamamı Git dışında tutulur.
+- `.run/screenshots/`: testte yeniden oluşturulan görseller; paylaşım paketine girmez.
 - `.run/`, `.pio/`, `.gradle/`, `build/`: yeniden üretilebilir, Git dışında tutulan çıktılar.
 
 Bu klasör başka bir kullanıcı/konumda derlenebilir; sabit kişisel proje yolu

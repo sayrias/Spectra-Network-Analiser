@@ -26,7 +26,7 @@ class BundleTests(unittest.TestCase):
         self.write('android-app/app/src/main/Main.java')
         self.write('android-app/gradle/wrapper/gradle-wrapper.jar')
         for name in ('android-app/local.properties', '.env', 'scripts/.env',
-                     'android-app/app/build/generated/Foo.java', 'release/test.apk',
+                     'android-app/app/build/generated/Foo.java', 'dist/test.apk',
                      'android-app/app/src/main/secret.jks', '.run/user.log'):
             self.write(name)
         paths = {p.relative_to(self.root).as_posix() for p in source_files(self.root)}
@@ -34,21 +34,21 @@ class BundleTests(unittest.TestCase):
                                  'android-app/gradle/wrapper/gradle-wrapper.jar'})
 
     def test_cleanup_preserves_sources_and_sdk_settings(self):
-        self.write('release/README.md')
+        self.write('dist/README.md')
         self.write('android-app/local.properties')
         self.write('firmware/src/main.cpp')
-        self.write('release/test.apk')
-        self.write('release/SPECTRA24-source.tar.gz')
+        self.write('dist/test.apk')
+        self.write('dist/SPECTRA24-source.tar.gz')
         self.write('android-app/app/build/test.class')
         targets = {p.relative_to(self.root).as_posix() for p in clean_targets(self.root)}
-        self.assertEqual(targets, {'release/test.apk', 'release/SPECTRA24-source.tar.gz',
+        self.assertEqual(targets, {'dist/test.apk', 'dist/SPECTRA24-source.tar.gz',
                                    'android-app/app/build'})
 
     def test_reject_unsafe_targets(self):
         for name in ('../other', '/tmp', '.'):
             with self.subTest(name=name), self.assertRaises(ValueError):
                 checked_path(self.root, name)
-        (self.root / 'release').symlink_to('/tmp', target_is_directory=True)
+        (self.root / 'dist').symlink_to('/tmp', target_is_directory=True)
         with self.assertRaises(ValueError):
             clean_targets(self.root)
 
@@ -62,7 +62,7 @@ class BundleTests(unittest.TestCase):
         self.write('build.sh')
         self.write('android-app/local.properties')
         package(self.root)
-        archive = self.root / 'release/SPECTRA24-source.tar.gz'
+        archive = self.root / 'dist/SPECTRA24-source.tar.gz'
         with tarfile.open(archive) as bundle:
             self.assertEqual(set(bundle.getnames()), {'SPECTRA24/README.md', 'SPECTRA24/build.sh'})
             self.assertEqual(bundle.getmember('SPECTRA24/build.sh').mode, 0o755)
@@ -76,7 +76,7 @@ class BundleTests(unittest.TestCase):
             package(self.root)
 
     def test_clean_dry_run_does_not_delete(self):
-        file = self.write('release/test.apk')
+        file = self.write('dist/test.apk')
         with patch('project_bundle.subprocess.run') as run:
             clean(self.root, dry_run=True)
             run.assert_not_called()

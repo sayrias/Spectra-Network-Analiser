@@ -3,16 +3,19 @@ set -Eeuo pipefail
 PROJECT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)"
 source "$PROJECT_DIR/scripts/common.sh"
 VARIANT="${1:-debug}"
-[[ $# -le 1 && "$VARIANT" =~ ^(debug|release)$ ]] || {
-  echo 'Kullanım: ./build.sh android [debug|release]' >&2; exit 2;
+[[ $# -le 1 && "$VARIANT" =~ ^(debug|release|signed)$ ]] || {
+  echo 'Kullanım: ./build.sh android [debug|release|signed]' >&2; exit 2;
 }
+if [[ "$VARIANT" == signed ]]; then
+  exec bash "$PROJECT_DIR/scripts/sign_android.sh"
+fi
 check_java
 find_sdk
 [[ -f "$SDK_DIR/platforms/android-35/android.jar" ]] || {
   echo 'HATA: Android SDK 35 bulunamadı. ./build.sh setup çalıştırın.' >&2; exit 1;
 }
 APP_DIR="$PROJECT_DIR/android-app"
-OUTPUT_DIR="$PROJECT_DIR/release"
+OUTPUT_DIR="$PROJECT_DIR/dist"
 if [[ "$VARIANT" == debug ]]; then
   TASK=assembleDebug
   APK_SOURCE="$APP_DIR/app/build/outputs/apk/debug/app-debug.apk"

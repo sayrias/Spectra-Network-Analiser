@@ -121,14 +121,14 @@ Proje kökünde:
 chmod +x build.sh android-app/gradlew scripts/*.sh
 ./build.sh doctor
 ./build.sh setup                   # SDK yoksa; lisansları siz onaylarsınız
-./build.sh android                 # release/SPECTRA24-debug.apk
+./build.sh android                 # dist/SPECTRA24-debug.apk
 ./build.sh flash /dev/ttyUSB0       # ESP32'yi derler ve yükler
 ```
 
 Debug APK'yı telefonunuza kurun. USB hata ayıklama açıksa ve tek telefon bağlıysa:
 
 ```bash
-adb install -r release/SPECTRA24-debug.apk
+adb install -r dist/SPECTRA24-debug.apk
 ```
 
 Uygulamada **Bağlantı → Hızlı Wi-Fi** veya **Otomatik bağlan** seçin.
@@ -150,6 +150,7 @@ tutun. Hotspot ve BLE kullanımını [Android rehberinde](android-app/README.md)
 ./build.sh                        # numaralı etkileşimli menü
 ./build.sh android                # kurulabilir debug APK
 ./build.sh android release        # imzasız release APK
+./build.sh android signed         # mevcut yayın anahtarıyla imzalı APK
 ./build.sh firmware               # yalnız derle; ESP32'ye yazmaz
 ./build.sh all                    # debug APK + firmware
 ./build.sh test                   # donanımsız kaynak testleri
@@ -177,7 +178,7 @@ SPECTRA24/
 ├── scripts/                 # derleme, SDK, yükleme ve test komutları
 ├── tools/                   # simülatör ve regresyon testleri
 ├── docs/                    # kurulum, mimari düzen, test geçmişi
-└── release/                 # yerel çıktılar; Git'e dahil edilmez
+└── dist/                    # yerel çıktılar; Git'e dahil edilmez
 ```
 
 [Ayrıntılı dosya düzeni](docs/DOSYA-DUZENI.md).
@@ -193,14 +194,14 @@ SPECTRA24/
 | [v1.0.0 test notları](docs/TEST-NOTLARI.md) | Doğrulama kapsamı ve henüz sınanmamış koşullar |
 | [Proje düzeni](docs/DOSYA-DUZENI.md) | Dosya ve klasörlerin görevleri |
 | [Geliştirici araçları](tools/README.md) | Simülatör, model ve arayüz regresyon testleri |
-| [Çıktı rehberi](release/README.md) | APK, firmware ve kaynak paketi |
+| [Çıktı rehberi](docs/OUTPUTS.md) | APK, firmware ve kaynak paketi |
 | [İndirme ve kurulum](docs/RELEASE.md) | APK edinme, donanım hazırlığı, ilk bağlantı ve güncelleme |
 | [Lisans özeti](docs/LISANS.md) | Ticari olmayan kullanım ve üçüncü taraf ayrımı |
 | [Üçüncü taraf bildirimleri](THIRD_PARTY_NOTICES.md) | Font, araç ve bağımlılık kaynakları |
 
 ## Kaynak paketi
 
-`./build.sh package`, `release/SPECTRA24-source.tar.gz` oluşturur. Paket;
+`./build.sh package`, `dist/SPECTRA24-source.tar.gz` oluşturur. Paket;
 kaynakları, testleri, belgeleri, font lisansını ve gerekli Gradle Wrapper JAR'ını
 içerir. APK/BIN, kişisel SDK yolu, önbellekler, test kayıtları ve ekran görüntüleri
 dahil edilmez. Hazır uygulama dosyaları için

@@ -48,7 +48,7 @@ def tap(node):
 
 def screenshot(name):
     time.sleep(2)  # let the DEMO stream resume after UIAutomator's idle snapshot
-    output=ROOT / "release" / "screenshots"
+    output=ROOT / ".run" / "screenshots"
     output.mkdir(parents=True,exist_ok=True)
     (output / name).write_bytes(adb("exec-out","screencap","-p"))
 

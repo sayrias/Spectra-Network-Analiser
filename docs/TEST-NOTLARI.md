@@ -34,6 +34,7 @@ Android güncelleme sayacı mevcut kurulumların güncellenebilmesi için artar.
 | Python kontrolleri | `./build.sh test` | Simülatör, Wi-Fi/BLE kaynak politikası, paketleme/yol güvenliği |
 | Derlemeler | `./build.sh test-full` | ESP32 ve Android debug |
 | Release derleme | `./build.sh android release` | İmzasız APK; dağıtım imzası değildir |
+| İmzalı APK | `./build.sh android signed` | Mevcut yayın anahtarı, APK v2/v3 imza ve ZIP hizalama doğrulaması |
 | Android model/izin | `./build.sh test-models` | Açık emülatörde 63 kontrol |
 | Arayüz | `python3 tools/ui_v35_smoke.py` | DEMO kategori ayrımı, menüler, aynı bağlantıda 12/8/4 onayı |
 | Gerçek veri bağlantısı | `./build.sh test-full --live` | Bağlı fiziksel cihazdan TCP hello + UDP çerçevesi/CRC |
@@ -57,7 +58,9 @@ Güncel v1.0.0 kontrolleri aşağıdaki doğrulama kaydında ayrıca belirtilir.
 - Bu sürüm adlandırmasından sonra fiziksel telefon/ESP32 saha testi ve
   Android emülatör modeli/UI testi yeniden çalıştırılmadı. Önceki sonuçlar
   yukarıda tarihsel kapsamıyla belirtilmiştir.
-- Yayın anahtarı oluşturulmadı; release APK henüz imzalı dağıtım dosyası değildir.
+- Yayın anahtarıyla imzalanan `SPECTRA24-v1.0.0.apk` için APK v2/v3 imza
+  doğrulaması ve ZIP hizalama kontrolü geçti. Anahtar kaynak depoda tutulmaz.
+  Bu kontrol, fiziksel telefonda kurulum/çalışma testi yerine geçmez.
 
 ## Bilinen sınırlar
 

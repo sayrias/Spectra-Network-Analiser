@@ -70,7 +70,7 @@ kaydedilir. Android titreşim/rahatsız-etmeyin politikaları geçerlidir.
 ./gradlew assembleDebug
 ```
 
-Ana klasördeki `./build.sh android` APK'yı `release/` altına çıkarır.
+Ana klasördeki `./build.sh android` APK'yı `dist/` altına çıkarır.
 `./build.sh emulator`, APK'yı Android 15 emülatöre kurar. Bu
 testte veriler `tools/device_simulator.py` tarafından üretilir; arayüzde turuncu
 `DEMO` ve `SENTETİK DEMO` etiketleri vardır, waterfall filigranlıdır ve alarm sesi

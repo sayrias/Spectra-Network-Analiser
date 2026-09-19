@@ -43,9 +43,10 @@ root yetkisi istenmez. İlk Gradle/PlatformIO derlemesi internet gerektirir.
 
 | Komut | Çıktı / etki |
 | --- | --- |
-| `./build.sh android` | `release/SPECTRA24-debug.apk` |
-| `./build.sh android release` | `release/SPECTRA24-release-unsigned.apk` |
-| `./build.sh firmware` | `release/spectra24-esp32.bin` |
+| `./build.sh android` | `dist/SPECTRA24-debug.apk` |
+| `./build.sh android release` | `dist/SPECTRA24-release-unsigned.apk` |
+| `./build.sh android signed` | `dist/SPECTRA24-v1.0.0.apk` — mevcut özel yayın anahtarıyla imzalanır |
+| `./build.sh firmware` | `dist/spectra24-esp32.bin` |
 | `./build.sh all` | Debug APK + firmware; donanıma yüklemez |
 | `./build.sh flash /dev/ttyUSB0` | Firmware derler ve bağlı ESP32'ye yazar |
 | `./build.sh flash /dev/ttyUSB0 --monitor` | Yükleme sonrası seri monitör; Ctrl+C ile çıkış |
@@ -59,6 +60,15 @@ Debug APK bu bilgisayarın standart Android debug anahtarıyla imzalanır. Başk
 makinede oluşturulmuş APK ile imza uyuşmazlığı yaşanabilir; var olan uygulamayı
 kaldırmak verilerini siler. Release çıktısı imzasızdır; imzalama anahtarı/parolası
 bu projede oluşturulmaz veya depolanmaz. Store yayını bu komutun kapsamı dışındadır.
+
+`android signed`, proje dışında tutulan mevcut yayın anahtarını kullanır;
+eksik anahtar varsa hata verir, yeni kimlik üretmez. Varsayılan konum
+`$HOME/.local/share/spectra24/signing/` içindeki `release.p12` ve
+`keystore.pass` dosyalarıdır; alias `spectra24` olur. Başka bir konum için
+`SPECTRA_SIGNING_DIR`, alias için `SPECTRA_KEY_ALIAS` kullanılabilir.
+Bu özel dosyalar dağıtılmaz ve Git'e eklenmez. İmzalama sonrasında APK imzası
+ve ZIP hizalaması doğrulanır. Anahtarı ve parolayı güvenli, ayrı bir yedekte
+korumak sonraki güncellemeler için gereklidir.
 
 ## Test katmanları
 

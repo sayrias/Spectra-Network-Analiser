@@ -7,7 +7,7 @@ APP_ID="com.spectra.analyzer"
 AVD_NAME="Spectra24_API35"
 IMAGE_PACKAGE="system-images;android-35;google_apis;x86_64"
 RUN_DIR="$PROJECT_DIR/.run"
-RELEASE_DIR="$PROJECT_DIR/release"
+RELEASE_DIR="$PROJECT_DIR/dist"
 
 SDK_DIR="${ANDROID_SDK_ROOT:-${ANDROID_HOME:-}}"
 if [[ -z "$SDK_DIR" && -f "$PROJECT_DIR/android-app/local.properties" ]]; then
@@ -34,7 +34,7 @@ if [[ ! -d "$SDK_DIR/system-images/android-35/google_apis/x86_64" ]]; then
 fi
 
 "$PROJECT_DIR/scripts/build_android.sh"
-mkdir -p "$RUN_DIR" "$RELEASE_DIR/screenshots"
+mkdir -p "$RUN_DIR" "$RUN_DIR/screenshots"
 
 stop_simulator
 nohup python3 "$PROJECT_DIR/tools/device_simulator.py" >"$RUN_DIR/simulator.log" 2>&1 &
@@ -124,10 +124,10 @@ if ! $CONNECTED; then
 fi
 
 sleep 2
-"$ADB" -s "$SERIAL" exec-out screencap -p > "$RELEASE_DIR/screenshots/spectra24-emulator.png"
+"$ADB" -s "$SERIAL" exec-out screencap -p > "$RUN_DIR/screenshots/spectra24-emulator.png"
 echo
 echo "[OK] SPECTRA 24 emülatörde çalışıyor: $SERIAL"
 echo "[OK] Canlı waterfall ve TCP simülatör bağlantısı doğrulandı"
 echo "[OK] PC veri simülatörü: PID $SIMULATOR_PID"
-echo "[OK] Ekran görüntüsü: $RELEASE_DIR/screenshots/spectra24-emulator.png"
+echo "[OK] Ekran görüntüsü: $RUN_DIR/screenshots/spectra24-emulator.png"
 echo "Durdurmak için: $PROJECT_DIR/scripts/stop_android_test.sh"

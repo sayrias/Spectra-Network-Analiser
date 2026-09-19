@@ -13,7 +13,7 @@ import tempfile
 ROOT = Path(__file__).resolve().parents[1]
 FILES = (
     '.gitignore', '.gitattributes', 'README.md', 'build.sh', 'THIRD_PARTY_NOTICES.md',
-    'LICENSE', 'LICENSE.md', 'release/README.md',
+    'LICENSE', 'LICENSE.md',
     'firmware/.gitignore', 'firmware/platformio.ini', 'firmware/README.md',
     'android-app/.gitignore', 'android-app/README.md', 'android-app/build.gradle',
     'android-app/settings.gradle', 'android-app/gradle.properties',
@@ -29,7 +29,7 @@ TREES = {
 }
 CACHES = (
     '.run', 'firmware/.pio', 'android-app/.gradle', 'android-app/build',
-    'android-app/app/build', 'tools/__pycache__', 'release/screenshots',
+    'android-app/app/build', 'tools/__pycache__',
 )
 
 
@@ -71,7 +71,7 @@ def source_files(root):
 
 def clean_targets(root):
     targets = [checked_path(root, p) for p in CACHES]
-    output = checked_path(root, 'release')
+    output = checked_path(root, 'dist')
     if output.exists():
         for path in output.iterdir():
             if path.suffix in {'.apk', '.bin'} or path.name in {
@@ -91,10 +91,10 @@ def package(root):
             data = path.read_bytes()
             if re.search(rb'^-----BEGIN (?:[A-Z0-9]+ )?PRIVATE KEY-----', data, re.MULTILINE):
                 raise ValueError(f'Özel anahtar belirtisi: {path.relative_to(root)}')
-    output = checked_path(root, 'release')
+    output = checked_path(root, 'dist')
     output.mkdir(exist_ok=True)
-    archive = checked_path(root, 'release/SPECTRA24-source.tar.gz')
-    checksum = checked_path(root, 'release/SPECTRA24-source.tar.gz.sha256')
+    archive = checked_path(root, 'dist/SPECTRA24-source.tar.gz')
+    checksum = checked_path(root, 'dist/SPECTRA24-source.tar.gz.sha256')
     with tempfile.TemporaryDirectory(prefix='spectra-source-') as staging:
         temporary = Path(staging) / archive.name
         with tarfile.open(temporary, 'w:gz') as bundle:

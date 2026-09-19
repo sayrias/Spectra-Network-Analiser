@@ -9,7 +9,7 @@ usage() {
 SPECTRA 24 · Derleme ve geliştirme merkezi
 
 Kullanım: ./build.sh [komut] [seçenek]
-  android [debug|release]    APK derle (varsayılan: debug; release imzasızdır)
+  android [debug|release|signed]  APK derle (release imzasız, signed yayın anahtarı ister)
   firmware                  ESP32 derle, yükleme yapma
   all                       Debug APK + ESP32 derle
   flash [/dev/ttyUSB0] [--monitor]  ESP32'yi derle ve yükle
@@ -34,10 +34,10 @@ no_args() { [[ $# -eq 0 ]] || { echo 'Bu komut ek seçenek kabul etmez.' >&2; ex
 firmware() {
   find_pio
   "$PIO" run --project-dir "$PROJECT_DIR/firmware"
-  mkdir -p "$PROJECT_DIR/release"
+  mkdir -p "$PROJECT_DIR/dist"
   install -m 0644 "$PROJECT_DIR/firmware/.pio/build/esp32doit-devkit-v1/firmware.bin" \
-    "$PROJECT_DIR/release/spectra24-esp32.bin"
-  echo "Hazır: $PROJECT_DIR/release/spectra24-esp32.bin"
+    "$PROJECT_DIR/dist/spectra24-esp32.bin"
+  echo "Hazır: $PROJECT_DIR/dist/spectra24-esp32.bin"
 }
 
 source_tests() {
@@ -97,7 +97,7 @@ dispatch() {
 if [[ $# -gt 0 ]]; then dispatch "$@"; exit; fi
 if [[ ! -t 0 || ! -t 1 ]]; then usage; exit; fi
 printf '\nSPECTRA 24 · Geliştirme merkezi\n\n'
-printf '  1) Android debug APK\n  2) ESP32 firmware\n  3) İkisini derle\n  4) Kaynak testleri\n  5) Emülatörde dene\n  6) Araçları kontrol et\n  7) Paylaşılabilir kaynak paketi\n  8) Derleme çıktılarını temizle\n  9) Android SDK kur\n 10) ESP32 yükle\n 11) Android release APK (imzasız)\n  0) Çıkış\n\n'
+printf '  1) Android debug APK\n  2) ESP32 firmware\n  3) İkisini derle\n  4) Kaynak testleri\n  5) Emülatörde dene\n  6) Araçları kontrol et\n  7) Paylaşılabilir kaynak paketi\n  8) Derleme çıktılarını temizle\n  9) Android SDK kur\n 10) ESP32 yükle\n 11) Android release APK (imzasız)\n 12) İmzalı yayın APK\n  0) Çıkış\n\n'
 read -r -p 'Seçiminiz: ' choice || exit 0
 case "$choice" in
   1) dispatch android ;; 2) dispatch firmware ;; 3) dispatch all ;;
@@ -110,6 +110,7 @@ case "$choice" in
       if [[ -n "$port" ]]; then dispatch flash "$port"; else dispatch flash; fi
     fi ;;
   11) dispatch android release ;;
+  12) dispatch android signed ;;
   0|'') exit 0 ;;
   *) echo 'Geçersiz seçim.' >&2; exit 2 ;;
 esac
