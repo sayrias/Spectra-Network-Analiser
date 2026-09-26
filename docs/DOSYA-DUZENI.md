@@ -3,7 +3,7 @@
 [![Ana rehber](assets/guide.svg)](../README.md)
 [![Derleme](assets/structure.svg)](BUILD.md)
 
-**v1.0.0** — kaynak, belge ve üretilen çıktılar birbirinden ayrıdır.
+**v1.1.0** — kaynak, belge ve üretilen çıktılar birbirinden ayrıdır.
 
 - `build.sh`: etkileşimli menü ve otomasyon için ortak CLI.
 - `scripts/`: Android/ESP32 derleme, yükleme, SDK kurulumu ve test başlatıcıları.

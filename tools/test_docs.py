@@ -33,8 +33,8 @@ for path in files:
 
 gradle = (root / 'android-app/app/build.gradle').read_text()
 version = re.search(r"versionName '([^']+)'", gradle).group(1)
-assert version == '1.0.0'
-assert re.search(r'versionCode\s+10\b', gradle)
+assert version == '1.1.0'
+assert re.search(r'versionCode\s+11\b', gradle)
 firmware = (root / 'firmware/src/main.cpp').read_text()
 versions = re.findall(r'doc\["firmware"\] = "([^"]+)";', firmware)
 assert len(versions) == 3 and set(versions) == {version}

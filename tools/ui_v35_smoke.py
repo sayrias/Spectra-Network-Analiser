@@ -17,7 +17,7 @@ tap(find("Radar işlemleri","content-desc"));find("CSV dışa aktar")
 tap(find("Etiket algılama hakkında"));find("Etiket ve beacon gözlemi")
 screenshot("spectra24-tracker-info-v35.png")
 tap(find("Pencereyi kapat","content-desc"))
-nav("Ayarlar");find("SPECTRA 1.0.0 · özel arayüz")
+nav("Ayarlar");find("SPECTRA 1.1.0 · özel arayüz")
 log=ROOT/".run/simulator.log"
 before=log.read_text().count("[BAĞLANDI]")
 for label,count in (("Ayrıntılı · 12 örnek/kanal",12),("Dengeli · 8 örnek/kanal",8),("Hızlı · 4 örnek/kanal",4)):

@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="640" height="640" viewBox="0 0 640 640" role="img" aria-labelledby="title desc">
+  <title id="title">SPECTRA 24 logo</title>
+  <desc id="desc">Turuncu spektrum çizgisi ve radyo alan halkalarından oluşan SPECTRA 24 işareti.</desc>
+  <defs>
+    <linearGradient id="signal" x1="110" y1="420" x2="535" y2="190" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#ff7a24"/>
+      <stop offset="1" stop-color="#ffd09a"/>
+    </linearGradient>
+    <filter id="glow" x="-40%" y="-40%" width="180%" height="180%">
+      <feGaussianBlur stdDeviation="9" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+  <circle cx="400" cy="280" r="156" fill="none" stroke="#ff8a32" stroke-width="9" opacity=".2"/>
+  <circle cx="400" cy="280" r="104" fill="none" stroke="#ff8a32" stroke-width="9" opacity=".32"/>
+  <circle cx="400" cy="280" r="52" fill="none" stroke="#ff8a32" stroke-width="9" opacity=".5"/>
+  <path d="M92 342h96v-70h62v70h46V168h58v268h58v-94h62v-46h74v46" fill="none" stroke="url(#signal)" stroke-width="30" stroke-linecap="round" stroke-linejoin="round" filter="url(#glow)"/>
+  <circle cx="548" cy="342" r="16" fill="#71e7c1"/>
+</svg>

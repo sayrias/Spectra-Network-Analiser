@@ -1,5 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1100" height="320" viewBox="0 0 1100 320" role="img" aria-labelledby="title desc">
-  <title id="title">SPECTRA 24 — RF Field Studio — v1.0.0</title>
+  <title id="title">SPECTRA 24 — RF Field Studio — v1.1.0</title>
   <desc id="desc">ESP32 ve nRF24 ile canlı RF gözlemi. Android, Wi-Fi ve Bluetooth LE. Ticari olmayan kullanım.</desc>
   <defs>
     <linearGradient id="bg" x2="1" y2="1"><stop stop-color="#191d24"/><stop offset="1" stop-color="#090c11"/></linearGradient>
@@ -17,7 +17,7 @@
   <text x="38" y="152" font-family="Arial, sans-serif" font-size="68" font-weight="700" letter-spacing="-2" fill="#fff4e8">SPECTRA 24</text>
   <text x="42" y="190" font-family="Arial, sans-serif" font-size="20" fill="#b8c0cc">Canlı RF gözlemi. Tek bir arayüz.</text>
   <rect x="42" y="229" width="90" height="34" rx="17" fill="#ff8a32"/>
-  <text x="87" y="251" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" font-weight="700" fill="#17120e">v1.0.0</text>
+  <text x="87" y="251" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" font-weight="700" fill="#17120e">v1.1.0</text>
   <rect x="142" y="229" width="149" height="34" rx="17" fill="#20262e" stroke="#3b4552"/>
   <text x="216" y="251" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" fill="#dae1e9">ANDROID 8.0+</text>
   <rect x="301" y="229" width="149" height="34" rx="17" fill="#20262e" stroke="#3b4552"/>

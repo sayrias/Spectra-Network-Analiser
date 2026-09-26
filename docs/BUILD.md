@@ -3,7 +3,7 @@
 [![Ana rehber](assets/guide.svg)](../README.md)
 [![Testler](assets/tests.svg)](TEST-NOTLARI.md)
 
-**SPECTRA 24 v1.0.0** — önce araçları kontrol edin, sonra hedefinizi seçin.
+**SPECTRA 24 v1.1.0** — önce araçları kontrol edin, sonra hedefinizi seçin.
 
 Tüm örnekler proje kökünden çalışır. `build.sh`, başka bir çalışma dizininden
 tam yoluyla çağrıldığında da doğru proje üzerinde çalışır. Linux/Bash iş akışı
@@ -45,7 +45,7 @@ root yetkisi istenmez. İlk Gradle/PlatformIO derlemesi internet gerektirir.
 | --- | --- |
 | `./build.sh android` | `dist/SPECTRA24-debug.apk` |
 | `./build.sh android release` | `dist/SPECTRA24-release-unsigned.apk` |
-| `./build.sh android signed` | `dist/SPECTRA24-v1.0.0.apk` — mevcut özel yayın anahtarıyla imzalanır |
+| `./build.sh android signed` | `dist/SPECTRA24-v1.1.0.apk` — mevcut özel yayın anahtarıyla imzalanır |
 | `./build.sh firmware` | `dist/spectra24-esp32.bin` |
 | `./build.sh all` | Debug APK + firmware; donanıma yüklemez |
 | `./build.sh flash /dev/ttyUSB0` | Firmware derler ve bağlı ESP32'ye yazar |
@@ -124,7 +124,7 @@ uygulamaları artık `scripts/` altındadır. Yeni ortak giriş noktası `./buil
 
 ## Sürüm ve güncelleme
 
-Görünen Android sürümü ve firmware bildirimi **1.0.0**'dır. Android'in dahili
+Görünen Android sürümü ve firmware bildirimi **1.1.0**'dır. Android'in dahili
 `versionCode` değeri **10** tutulur: daha önceki geliştirme APK'larının üzerine
 aynı imzayla güncelleme yapılabilmesi için bu sayaç geriye alınmaz. Protokol
 sürümü **2** olarak kalır; ürün sürümüyle aynı kavram değildir.

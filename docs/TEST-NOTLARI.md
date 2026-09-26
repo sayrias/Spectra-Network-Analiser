@@ -1,4 +1,4 @@
-# SPECTRA 24 v1.0.0 — Test ve sürüm notları
+# SPECTRA 24 v1.1.0 — Test ve sürüm notları
 
 [![Ana rehber](assets/guide.svg)](../README.md)
 [![Derleme ve test](assets/tests.svg)](BUILD.md)
@@ -7,14 +7,14 @@
 
 | Bileşen | Değer |
 | --- | --- |
-| Android görünen sürüm | 1.0.0 |
-| Android dahili güncelleme sayacı | versionCode 10 |
-| ESP32 firmware | 1.0.0 |
+| Android görünen sürüm | 1.1.0 |
+| Android dahili güncelleme sayacı | versionCode 11 |
+| ESP32 firmware | 1.1.0 |
 | İkili haberleşme protokolü | 2 — değişmedi |
 
-v1.0.0, ilk paylaşım sürümünün adlandırmasıdır. Önceki geliştirme sürümlerinin
-özellikleri korunur; ürün sürümü yeniden düzenlendi diye protokol sıfırlanmaz.
-Android güncelleme sayacı mevcut kurulumların güncellenebilmesi için artar.
+v1.1.0; yerel ST7789 ekranı, fiziksel mod düğmesi, kademeli buzzer uyarısı ve
+uygulamadaki donanım ayarlarını ekler. Ürün sürümü değişse de protokol v2 olarak
+kalır. Android güncelleme sayacı mevcut kurulumların güncellenebilmesi için artar.
 
 ## Sürüm kapsamı
 
@@ -42,7 +42,7 @@ Android güncelleme sayacı mevcut kurulumların güncellenebilmesi için artar.
 Sürüm adlandırmasından önce aynı işlevler üzerinde 442 Java kontrolü,
 63 Android kontrolü, DEMO bağlantısı ve debug/release/firmware derlemeleri
 başarılıydı. Bunlar yeni sürümün sahada test edildiği anlamına gelmez.
-Güncel v1.0.0 kontrolleri aşağıdaki doğrulama kaydında ayrıca belirtilir.
+v1.0.0 kaydı tarihsel olarak korunur; v1.1.0 donanım kaydı alttadır.
 
 ## v1.0.0 doğrulama kaydı — 19 Eylül 2026
 
@@ -74,6 +74,47 @@ Güncel v1.0.0 kontrolleri aşağıdaki doğrulama kaydında ayrıca belirtilir.
   boyutu veya tüm internet kullanımı değildir.
 - SDK XML sürüm uyarısı ve bazı mevcut deprecated API derleyici notları
   görülebilir; başarılı derleme ile gerçek cihaz doğrulaması ayrı şeylerdir.
+
+## Yerel ekran ve buzzer doğrulaması — 26 Eylül 2026
+
+- ST7789 ayrı HSPI hattı, beş ekran modu, GPIO32 buton ve GPIO25 transistor
+  sürümlü pasif buzzer firmware derlemesinden geçti.
+- Android uygulamasına buzzer aç/kapat, şiddet, üç ton profili ve cihazda test
+  komutu eklendi; debug APK derlemesi başarılı.
+- Orta/yüksek/aşırı adaptif RF doluluk seviyeleri protokol olaylarına eklendi.
+  Statik bağlantı/pin regresyon testi ve tüm kaynak testleri geçti.
+- Derleme sonucu tek başına ekran yönü, ekran kartının pin sırası, buzzer
+  transistor bağlantısı veya sahadaki alarm eşiklerinin fiziksel doğrulaması değildir.
+- Firmware `/dev/ttyUSB0` üzerinden karta yazıldı. Seri kontrolde nRF24 `READY`,
+  20 taramalık kalibrasyon tamamlandı ve 4 örnek/kanalda yaklaşık 5,5 tarama/sn
+  raporlandı. Ekran görüntüsü ve gerçek buzzer sesi otomatik olarak doğrulanamadı.
+- v1.1.0 ekran başlatması CS’siz 7 pinli panel için TFT_eSPI ve 20 MHz HSPI
+  kullanır; açılışta kırmızı/yeşil/mavi tanı dizisi gösterir. Android hızlı
+  profilleri ayrıca Kaydet beklemeden sıralı komut kuyruğuna girer.
+- Güncel v1.1.0 karta tekrar yazıldı. Seri kayıtta ST7789 başlatma mesajı, nRF24
+  `READY`, yüzde 100 kalibrasyon ve ekran etkin durumdayken yaklaşık 5,9 tarama/sn
+  doğrulandı. Ekranın ışık ve piksel çıktısı uzaktan görsel olarak doğrulanamaz.
+- Fiziksel panelde görüntü kullanıcı tarafından doğrulandı. Açılışa 145
+  taramalık yerel waterfall eklendi; spektrum tepesi işaretlendi, trafik çubukları
+  anık en yüksek değere göre ölçeklendi ve tüm modlara ad/sayfa göstergesi eklendi.
+  Güncel firmware yeniden karta yazıldı; nRF24 `READY`, kalibrasyon tamam ve
+  ekran etkin durumdayken 5,5 tarama/sn seri kayıtta doğrulandı.
+- Periyodik tam ekran silme kaldırıldı; modun sabit alanları yalnızca moda
+  girerken, canlı alanlar ise bölgesel olarak güncellenir. Waterfall RGB565 bayt
+  sırası ST7789'e göre düzeltilerek SDR tipi lacivert/mavi/camgöbeği/sarı/kırmızı
+  palet korundu. Güncel firmware karta yazıldı ve 5,9 tarama/sn doğrulandı.
+- Beş ekranın başlığı yüksek kontrastlı olarak sabitlendi; yeşil nokta `RF`
+  hazır göstergesiyle aynı satıra alındı. Trafik ekranı yönetim/veri/kontrol
+  çerçevelerini, RF Bulucu gerçek nRF24 ölçümünden türetilen göreli puanı,
+  RF Uyarı ise adaptif doluluk ve buzzer durumunu açık etiketlerle gösterir.
+- TFT_eSPI `USER_SETUP_LOADED` yapılandırmasına `LOAD_GLCD` eklendi. Önceki
+  derlemede şekiller çizilirken tüm metinlerin boş kalmasının nedeni Font 1'in
+  derlemeye dahil edilmemesiydi. Beş sayfa sekmesi 240 piksel genişlikte ortalandı.
+- Pasif buzzer PWM eğrisi 70–100 seviyelerinde tam %50 duty tepe sürüşüne
+  ulaşacak şekilde yükseltildi. Derin/RWR/keskin profilleri, karttaki piezonun
+  daha güçlü duyulduğu yaklaşık 0,95–2,39 kHz bandına ve daha uzun,
+  ayırt edilebilir tek/çift/üçlü darbe ritimlerine taşındı; firmware karta
+  yazılıp normal başlangıç doğrulandı.
 
 ## Yeniden deneme
 

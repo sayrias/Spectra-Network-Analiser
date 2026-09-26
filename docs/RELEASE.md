@@ -3,7 +3,7 @@
 [![Ana rehber](assets/guide.svg)](../README.md)
 [![Derleme](assets/android.svg)](BUILD.md)
 
-**SPECTRA 24 v1.0.0 · Android 8.0+ · ESP32 + nRF24**
+**SPECTRA 24 v1.1.0 · Android 8.0+ · ESP32 + nRF24**
 
 SPECTRA 24 iki parçadan oluşur: telefona kurulan Android uygulaması ve
 ESP32 üzerinde çalışan firmware. Canlı ölçüm için ikisinin de hazır olması
@@ -57,8 +57,8 @@ Port adını kendi sisteminize göre değiştirin. Bu komut firmware'i derler ve
 gerekli flash bölümleriyle birlikte yükler. Yalnız uygulama `.bin` dosyasını
 rastgele bir adrese yazmayın; yeni kartta bootloader ve bölüm tablosu da gerekir.
 
-Uygulama ile uyumlu firmware sürümünü kullanın. v1.0.0 uygulaması ve
-v1.0.0 firmware'i birlikte kullanılmak üzere hazırlanmıştır.
+Uygulama ile uyumlu firmware sürümünü kullanın. v1.1.0 uygulaması ve
+v1.1.0 firmware'i birlikte kullanılmak üzere hazırlanmıştır.
 
 ## 4. Telefona kurun ve bağlanın
 

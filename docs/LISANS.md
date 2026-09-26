@@ -2,7 +2,7 @@
 
 [![Ana rehber](assets/guide.svg)](../README.md)
 
-**SPECTRA 24 v1.0.0 · PolyForm Noncommercial 1.0.0**
+**SPECTRA 24 v1.1.0 · PolyForm Noncommercial 1.0.0**
 
 Projenin özgün kaynak kodu, belgeleri ve özgün SVG görselleri
 [LICENSE.md](../LICENSE.md) koşullarıyla sunulur. İngilizce resmî metin

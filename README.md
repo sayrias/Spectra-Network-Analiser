@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="docs/assets/hero.svg" alt="SPECTRA 24 — RF Field Studio — v1.0.0" width="1100">
+  <img src="docs/assets/hero.svg" alt="SPECTRA 24 — RF Field Studio — v1.1.0" width="1100">
 </p>
 
 <h1 align="center">SPECTRA 24</h1>
@@ -28,13 +28,14 @@ Canlı waterfall · Wi-Fi ve BLE envanteri · Ayarlanabilir RF uyarıları</p>
 
 ## Bir bakışta
 
-ESP32-WROOM-32D ve nRF24 tabanlı ölçüm cihazı; yerel Android uygulamasında
-canlı waterfall, Wi-Fi/BLE envanteri ve gözlenen kablosuz trafik istatistikleri.
+ESP32-WROOM-32D ve nRF24 tabanlı ölçüm cihazı; yerel ST7789 ekranda bağımsız
+spektrum/Yagi görünümü, Android uygulamasında canlı waterfall, Wi-Fi/BLE
+envanteri ve gözlenen kablosuz trafik istatistikleri.
 Turuncu-siyah arayüz, uygulamaya özel ayrıntı pencereleri ve ayarlanabilir RF uyarıları.
 
 | Sürüm | Telefon | Ölçüm cihazı | Bağlantı |
 | --- | --- | --- | --- |
-| **v1.0.0** | Android 8.0 ve üzeri | ESP32-WROOM-32D + E01-ML01DP5 | Wi-Fi / Bluetooth LE |
+| **v1.1.0** | Android 8.0 ve üzeri | ESP32-WROOM-32D + E01-ML01DP5 + isteğe bağlı ST7789/buzzer | Wi-Fi / Bluetooth LE |
 
 ## Neler yapar?
 
@@ -51,6 +52,14 @@ Turuncu-siyah arayüz, uygulamaya özel ayrıntı pencereleri ve ayarlanabilir R
   adaptif taban kalibrasyonu, hassasiyet ve doğrulama süresi.
 - **Telefon uyarıları:** özel ses dosyaları, titreşim, tekrar aralığı ve
   açıkça işaretli test olayı. Olay geçmişi ve CSV/JSON dışa aktarımı.
+- **Bağımsız saha modu:** 1.3" ST7789 üzerinde 145 satırlık waterfall,
+  işaretli spektrum tepesi, çevre trafiği, göreli Yagi RF bulucu ve üç
+  kademeli uyarı; tek buton ve pasif buzzer.
+- **Temiz yerel RF modu:** ekranın Bağlantı sayfasından Wi-Fi ve BLE birlikte
+  tamamen kapatılabilir; ESP32 yeniden başladıktan sonra nRF24, ekran ve buzzer
+  telefonsuz çalışmayı sürdürür ve cihazın kendi yayını ölçüme karışmaz.
+- **Cihaz buzzer ayarları:** uygulamadan aç/kapat, şiddet ve üç ton profili;
+  orta/yüksek/aşırı RF doluluğunda birbirinden ayırt edilen ritimler.
 - **Donanımsız arayüz testi:** emülatörde belirgin `DEMO` etiketi taşıyan
   ayrı simülatör; gerçek kullanımda kendiliğinden demo verisine geçilmez.
 
@@ -84,6 +93,11 @@ hücresel, LoRa veya çevredeki her cihazı algılayamaz.
 | GPIO 5 | CSN |
 | 3.3 V | VCC |
 | GND | GND |
+
+ST7789 ekran için GPIO `14/13/27/26/33`; mod butonu için GPIO `32`, transistor
+üzerinden sürülen pasif buzzer için GPIO `25` kullanılır. Ekran arka ışığı
+donanımsal potansiyometrededir. Tam bağlantı ve transistor şeması
+[donanım rehberindedir](firmware/README.md#st7789-ekran-buton-ve-pasif-buzzer).
 
 Modülü **5 V ile beslemeyin**. Ortak toprak ve kararlı 3,3 V besleme kullanın;
 modül yanında 100 nF + 10–47 µF kondansatör önerilir.
@@ -191,7 +205,7 @@ SPECTRA24/
 | [Android kullanım rehberi](android-app/README.md) | Bağlantı, izinler, geçmiş, ses ve titreşim |
 | [Donanım rehberi](firmware/README.md) | Pin bağlantıları, besleme ve firmware davranışı |
 | [Protokol referansı](firmware/docs/PROTOCOL.md) | JSON komutları, ikili ölçüm çerçevesi ve BLE |
-| [v1.0.0 test notları](docs/TEST-NOTLARI.md) | Doğrulama kapsamı ve henüz sınanmamış koşullar |
+| [v1.1.0 test notları](docs/TEST-NOTLARI.md) | Doğrulama kapsamı ve henüz sınanmamış koşullar |
 | [Proje düzeni](docs/DOSYA-DUZENI.md) | Dosya ve klasörlerin görevleri |
 | [Geliştirici araçları](tools/README.md) | Simülatör, model ve arayüz regresyon testleri |
 | [Çıktı rehberi](docs/OUTPUTS.md) | APK, firmware ve kaynak paketi |

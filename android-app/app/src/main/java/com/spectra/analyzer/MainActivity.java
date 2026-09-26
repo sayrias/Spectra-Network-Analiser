@@ -88,20 +88,21 @@ public final class MainActivity extends Activity {
     private Button categoryPicker;
     private int deviceCategory;
     private static final String[] DEVICE_CATEGORIES={"Wi-Fi", "BLE", "Trafik", "AirTag / Find My", "iBeacon", "BLE sensörler"};
-    private SeekBar thresholdBar, channelsBar, holdBar, cooldownBar, volumeBar;
-    private TextView thresholdOutput, channelsOutput, holdOutput, cooldownOutput, volumeOutput;
-    private Switch alertsSwitch, vibrateSwitch;
+    private SeekBar thresholdBar, channelsBar, holdBar, cooldownBar, volumeBar, buzzerLevelBar;
+    private TextView thresholdOutput, channelsOutput, holdOutput, cooldownOutput, volumeOutput, buzzerLevelOutput;
+    private Switch alertsSwitch, vibrateSwitch, buzzerSwitch;
     private final Button[] profileButtons = new Button[3];
+    private int selectedQuickProfile = -1;
     private TextView profileSummary;
     private boolean settingsDirty;
-    private Button tonePicker, scanPicker;
+    private Button tonePicker, scanPicker, buzzerTonePicker;
     private TextView scanApplyStatus;
     private boolean deviceConnected;
     private int pendingScanSamples;
     private final Runnable scanTimeout=()->{if(pendingScanSamples>0 && scanApplyStatus!=null)scanApplyStatus.setText("Cihaz onayı gelmedi · tekrar seçerek deneyin");};
     private android.app.Dialog expandedDialog;
     private final java.util.Set<android.app.Dialog> sheets=new java.util.HashSet<>();
-    private Spinner toneSpinner;
+    private Spinner toneSpinner, buzzerToneSpinner;
     private EditText hotspotSsid, hotspotPassword, manualIp;
     private SharedPreferences preferences;
     private boolean receiverRegistered;
@@ -507,6 +508,37 @@ public final class MainActivity extends Activity {
         saveParams.setMarginStart(dp(8)); actions.addView(save, saveParams);
         phone.addView(actions);
         body.addView(phone, cardParams());
+
+        LinearLayout deviceBuzzer = card();
+        deviceBuzzer.addView(text("ESP32 BUZZER", 10, ACCENT, true));
+        deviceBuzzer.addView(text("Telefon bağlı olmasa da kademeli RF uyarısı verir.",10,MUTED,false));
+        buzzerSwitch = toggleRow(deviceBuzzer, "Cihaz buzzerı", true);
+        buzzerLevelBar = range(deviceBuzzer, "Buzzer şiddeti", 100, buzzerLevelOutput = output());
+        buzzerToneSpinner = new Spinner(this);
+        ArrayAdapter<String> buzzerTones = new ArrayAdapter<>(this,
+                android.R.layout.simple_spinner_dropdown_item,
+                new String[]{"Derin ton", "RWR darbesi", "Keskin alarm"});
+        buzzerToneSpinner.setAdapter(buzzerTones);
+        buzzerToneSpinner.setBackground(round(PANEL_2, LINE, 11));
+        buzzerTonePicker=choicePicker("Buzzer tonu",buzzerToneSpinner);
+        deviceBuzzer.addView(buzzerTonePicker,new LinearLayout.LayoutParams(-1,dp(48)));
+        LinearLayout buzzerActions=horizontal();
+        Button buzzerTest=actionButton("CİHAZDA DENE",false);
+        buzzerTest.setOnClickListener(v->{
+            saveSettings();
+            // Wi-Fi and BLE transports both preserve command order. Queue the
+            // test immediately after settings instead of adding UI latency.
+            sendDeviceCommand("{\"action\":\"buzzerTest\"}");
+        });
+        buzzerActions.addView(buzzerTest,new LinearLayout.LayoutParams(0,dp(46),1));
+        Button buzzerSave=actionButton("KAYDET",true);
+        buzzerSave.setOnClickListener(v->saveSettings());
+        LinearLayout.LayoutParams buzzerSaveParams=new LinearLayout.LayoutParams(0,dp(46),1);
+        buzzerSaveParams.setMarginStart(dp(8));buzzerActions.addView(buzzerSave,buzzerSaveParams);
+        deviceBuzzer.addView(buzzerActions);
+        deviceBuzzer.addView(text("Orta, yüksek ve aşırı doluluk seviyeleri aynı profil içinde farklı ritimlerle çalar.",10,MUTED,false));
+        body.addView(deviceBuzzer,cardParams());
+
         LinearLayout advanced=card();
         advanced.addView(text("Tarama performansı",15,TEXT,true));
         scanSpinner=new Spinner(this);
@@ -538,7 +570,10 @@ public final class MainActivity extends Activity {
         addMeasurementNotice(body);
 
         SeekBar.OnSeekBarChangeListener listener = new SeekBar.OnSeekBarChangeListener() {
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) { if(fromUser)settingsDirty=true;updateSettingOutputs(); }
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                if(fromUser){settingsDirty=true;selectedQuickProfile=-1;}
+                updateSettingOutputs();
+            }
             public void onStartTrackingTouch(SeekBar seekBar) {}
             public void onStopTrackingTouch(SeekBar seekBar) {}
         };
@@ -547,6 +582,7 @@ public final class MainActivity extends Activity {
         holdBar.setOnSeekBarChangeListener(listener);
         cooldownBar.setOnSeekBarChangeListener(listener);
         volumeBar.setOnSeekBarChangeListener(listener);
+        buzzerLevelBar.setOnSeekBarChangeListener(listener);
         return scroll;
     }
 
@@ -748,11 +784,15 @@ public final class MainActivity extends Activity {
     private void applyDeviceSettings(JSONObject settings) {
         if(settings!=null && settings.has("samples"))confirmScanSamples(settings.optInt("samples"));
         if (settings == null || settingsDirty) return; // A reconnect must not erase an unsaved choice.
+        selectedQuickProfile=-1;
         thresholdBar.setProgress(settings.optInt("threshold", 30) - 10);
         channelsBar.setProgress(settings.optInt("channels", 28) - 8);
         holdBar.setProgress((settings.optInt("hold", 4000) - 1500) / 500);
         cooldownBar.setProgress((settings.optInt("cooldown", 30000) - 10000) / 5000);
         alertsSwitch.setChecked(settings.optBoolean("alerts", true));
+        buzzerSwitch.setChecked(settings.optBoolean("buzzer", true));
+        buzzerToneSpinner.setSelection(Math.max(0,Math.min(2,settings.optInt("buzzerTone",1))));
+        buzzerLevelBar.setProgress(settings.optInt("buzzerLevel",65));
         updateSettingOutputs();
     }
 
@@ -784,6 +824,7 @@ public final class MainActivity extends Activity {
 
     private void applyProfile(int profile) {
         settingsDirty=true;
+        selectedQuickProfile=profile;
         if (profile == 0) {
             thresholdBar.setProgress(12); channelsBar.setProgress(12); holdBar.setProgress(1);
         } else if (profile == 1) {
@@ -793,9 +834,12 @@ public final class MainActivity extends Activity {
         }
         cooldownBar.setProgress(profile == 0 ? 2 : profile == 1 ? 4 : 10);
         updateSettingOutputs();
+        saveSettings();
+        Toast.makeText(this, "Profil ESP32’ye gönderildi", Toast.LENGTH_SHORT).show();
     }
 
     private void loadSettings() {
+        selectedQuickProfile=-1;
         thresholdBar.setProgress(preferences.getInt("threshold", 30) - 10);
         channelsBar.setProgress(preferences.getInt("channels", 28) - 8);
         holdBar.setProgress((preferences.getInt("hold", 4000) - 1500) / 500);
@@ -803,6 +847,9 @@ public final class MainActivity extends Activity {
         volumeBar.setProgress(preferences.getInt("volume", 70));
         alertsSwitch.setChecked(preferences.getBoolean("alerts", true));
         vibrateSwitch.setChecked(preferences.getBoolean("vibrate", true));
+        buzzerSwitch.setChecked(preferences.getBoolean("buzzer", true));
+        buzzerToneSpinner.setSelection(Math.max(0,Math.min(2,preferences.getInt("buzzer_tone",1))));
+        buzzerLevelBar.setProgress(preferences.getInt("buzzer_level",65));
         hotspotSsid.setText(preferences.getString("hotspot_ssid", ""));
         String tone = preferences.getString("tone", "soft");
         for (int i = 0; i < toneKeys.size(); i++) if (toneKeys.get(i).equals(tone)) toneSpinner.setSelection(i);
@@ -825,12 +872,18 @@ public final class MainActivity extends Activity {
         preferences.edit().putInt("threshold", threshold).putInt("channels", channels)
                 .putInt("hold", hold).putInt("cooldown", cooldown)
                 .putInt("volume", volumeBar.getProgress()).putBoolean("alerts", alertsSwitch.isChecked())
-                .putBoolean("vibrate", vibrateSwitch.isChecked()).putString("tone", tone).apply();
+                .putBoolean("vibrate", vibrateSwitch.isChecked()).putString("tone", tone)
+                .putBoolean("buzzer",buzzerSwitch.isChecked())
+                .putInt("buzzer_tone",buzzerToneSpinner.getSelectedItemPosition())
+                .putInt("buzzer_level",buzzerLevelBar.getProgress()).apply();
         startService(new Intent(this, AnalyzerService.class).setAction(AnalyzerService.ACTION_SETTINGS)
                 .putExtra("threshold", threshold).putExtra("channels", channels)
                 .putExtra("hold", hold).putExtra("cooldown", cooldown)
                 .putExtra("volume", volumeBar.getProgress()).putExtra("alerts", alertsSwitch.isChecked())
-                .putExtra("vibrate", vibrateSwitch.isChecked()).putExtra("tone", tone));
+                .putExtra("vibrate", vibrateSwitch.isChecked()).putExtra("tone", tone)
+                .putExtra("buzzer",buzzerSwitch.isChecked())
+                .putExtra("buzzerTone",buzzerToneSpinner.getSelectedItemPosition())
+                .putExtra("buzzerLevel",buzzerLevelBar.getProgress()));
         updateSettingOutputs();
     }
 
@@ -848,13 +901,15 @@ public final class MainActivity extends Activity {
         holdOutput.setText(String.format(Locale.US, seconds % 1 == 0 ? "%.0f sn" : "%.1f sn", seconds));
         cooldownOutput.setText(((10000 + cooldownBar.getProgress() * 5000) / 1000) + " sn");
         volumeOutput.setText(volumeBar.getProgress() + "%");
+        buzzerLevelOutput.setText(buzzerLevelBar.getProgress() + "%");
         refreshPickers();
         int selectedProfile=-1;
         int[][] profiles = {{12,12,1,2},{20,20,5,4},{32,36,13,10}};
         for(int i=0;i<profileButtons.length;i++) {
             Button button=profileButtons[i]; if(button==null)continue;
-            boolean selected=thresholdBar.getProgress()==profiles[i][0] && channelsBar.getProgress()==profiles[i][1]
-                && holdBar.getProgress()==profiles[i][2] && cooldownBar.getProgress()==profiles[i][3];
+            boolean selected=selectedQuickProfile==i || (selectedQuickProfile<0
+                && thresholdBar.getProgress()==profiles[i][0] && channelsBar.getProgress()==profiles[i][1]
+                && holdBar.getProgress()==profiles[i][2] && cooldownBar.getProgress()==profiles[i][3]);
             if(selected)selectedProfile=i;
             button.setSelected(selected);button.setTextColor(selected?BG:TEXT);
             button.setBackground(buttonSurface(selected));
@@ -1397,6 +1452,7 @@ public final class MainActivity extends Activity {
     private void refreshPickers(){
         if(tonePicker!=null)tonePicker.setText(String.valueOf(toneSpinner.getSelectedItem()));
         if(scanPicker!=null)scanPicker.setText(String.valueOf(scanSpinner.getSelectedItem()));
+        if(buzzerTonePicker!=null)buzzerTonePicker.setText(String.valueOf(buzzerToneSpinner.getSelectedItem()));
     }
     private void showSpectrumHelp() {
         LinearLayout body=vertical();

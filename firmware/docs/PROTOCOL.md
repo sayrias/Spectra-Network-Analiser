@@ -3,9 +3,9 @@
 [![Ana rehber](../../docs/assets/guide.svg)](../../README.md)
 [![Donanım](../../docs/assets/hardware.svg)](../README.md)
 
-**Ürün / firmware v1.0.0 · İkili protokol v2**
+**Ürün / firmware v1.1.0 · İkili protokol v2**
 
-Ürün sürümü ve veri protokolü bağımsızdır. v1.0.0 adlandırması protokol
+Ürün sürümü ve veri protokolü bağımsızdır. v1.1.0 adlandırması protokol
 baytını, UUID'leri veya portları değiştirmez.
 
 ## BLE yayın başlıkları ve canlı ayarlar
@@ -59,23 +59,27 @@ Komut örnekleri:
 ```json
 {"action":"hello"}
 {"action":"ping"}
-{"action":"settings","threshold":30,"channels":28,"hold":4000,"cooldown":30000,"alerts":true}
+{"action":"settings","threshold":30,"channels":28,"hold":4000,"cooldown":30000,"alerts":true,"buzzer":true,"buzzerTone":1,"buzzerLevel":65}
 {"action":"calibrate"}
 {"action":"wifi","ssid":"TelefonHotspot","password":"parola"}
 {"action":"forgetWifi"}
 {"action":"settings","samples":4}
 {"action":"scan"}
 {"action":"alertTest"}
+{"action":"buzzerTest"}
 {"action":"scanNames"}
 ```
 
 Sınırlar: `threshold` 10–80 taban üstü puan, `channels` 8–100, `hold`
-1500–20000 ms ve `cooldown` 10000–300000 ms. Donanım ayarları ile hotspot
-bilgisi ESP32 NVS'sinde; ton, ses ve titreşim telefonda saklanır.
+1500–20000 ms ve `cooldown` 10000–300000 ms. `buzzerTone` 0–2,
+`buzzerLevel` 0–100 aralığındadır. Donanım ayarları ile hotspot bilgisi ESP32
+NVS'sinde; telefonun özel sesi ve titreşimi telefonda saklanır.
 
 Mesaj türleri: `hello`, `status`, `pong`, `saved`, `wifi_config`, `flow`, `wifi`,
-`ble` ve `alert`. Envanter mesajlarındaki `live=true`, listenin ESP32 taramasından
-geldiğini belirtir. Alarm sınıfı `baseline_wideband_anomaly`'dir.
+`ble`, `alert`, `buzzer_test`. Envanter mesajlarındaki `live=true`, listenin
+ESP32 taramasından geldiğini belirtir. Alarm sınıfı
+`adaptive_wideband_occupancy`; `severity` alanı `medium`, `high`, `extreme`
+veya kapanışta `normal` değeridir.
 
 ## Bluetooth LE aktarımı
 
@@ -122,9 +126,15 @@ oran hesabında her zaman gerçek `flow.windowMs` kullanılmalıdır.
 yanıtı isteğin kabulünü belirtir, bir ad bulunduğu anlamına gelmez.
 `ble.devices[].appearance` yayınlanan Bluetooth SIG Appearance değeridir;
 0 bilinmiyor anlamındadır. Cihaz kimliği doğrulanmış değildir.
-`status` ayrıca `heapFree`, `heapMin`, `uptime` ve `trafficCapacity` içerir.
+`status` ayrıca `heapFree`, `heapMin`, `uptime`, `trafficCapacity` ve
+`phoneRadios` içerir. `phoneRadios=true`, yerel Wi-Fi/BLE bağlantı servislerinin
+açık olduğunu belirtir. Fiziksel ekrandan bu radyolar kapatıldığında cihaz
+yeniden başlar ve artık uygulamaya durum mesajı göndermez; nRF24 yerel ölçümü
+devam eder.
 
 - `settings.samples`: 4–12; Android 4/8/12 profilleri sunar.
+- `settings.buzzer`, `buzzerTone`, `buzzerLevel`: yerel buzzer açık/kapalı,
+  ses profili ve PWM şiddeti. Yeniden başlatmadan uygulanır ve NVS'ye kaydedilir.
 - `status`: `scanHz`, `sweepUs`, `samples`, `sweeps`.
 - `flow.windowMs`: sayaçların gerçek ölçüm penceresi. Paket/sn =
   `total * 1000 / windowMs`; `bytes` gözlenen çerçeve baytlarıdır.
@@ -137,6 +147,7 @@ yanıtı isteğin kabulünü belirtir, bir ad bulunduğu anlamına gelmez.
 - Tam durum JSON'u J olay kanalından gider; küçük MTU'da kesilmiş durum
   bildirimi gönderilmez. Wi-Fi varken envanter TCP'dedir.
 - `alertTest`: `type=alert,test=true` ile yalnızca ses/bildirim zinciri testi;
-  RF alarm durumunu veya ölçümleri değiştirmez.
+  telefon zinciriyle birlikte yerel buzzerı da kısa süre sınar; RF ölçümünü değiştirmez.
+- `buzzerTest`: yerel buzzerda seçilmiş profilin aşırı seviye ritmini kısa süre çalar.
 - `scan`: Wi-Fi/BLE tarama zamanlayıcılarını yeniler. Bağlantı sürerken
   Wi-Fi taraması geçici aktarım gecikmesi oluşturabilir.

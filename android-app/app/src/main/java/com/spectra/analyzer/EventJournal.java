@@ -31,7 +31,9 @@ final class EventJournal {
                 case "alert":
                     JSONObject alert=new JSONObject(data.getStringExtra("json"));
                     boolean test=alert.optBoolean("test");
-                    title=test?"Alarm zinciri testi":alert.optBoolean("active")?"Geniş bant RF değişimi":"RF uyarısı sona erdi";
+                    String severity=alert.optString("severity","high");
+                    String severityName=severity.equals("extreme")?"Aşırı RF doluluğu":severity.equals("medium")?"Orta RF doluluğu":"Yüksek RF doluluğu";
+                    title=test?"Alarm zinciri testi":alert.optBoolean("active")?severityName:"RF uyarısı sona erdi";
                     detail=test?"TEST · RF algılama testi değildir":alert.optInt("affected")+" kanal · anomali puanı "+alert.optInt("confidence");
                     level=test?"test":alert.optBoolean("active")?"alert":"info";break;
                 default:return false;

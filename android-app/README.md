@@ -3,7 +3,7 @@
 [![Ana rehber](../docs/assets/guide.svg)](../README.md)
 [![Derleme](../docs/assets/android.svg)](../docs/BUILD.md)
 
-**v1.0.0 · versionCode 10 · Yerel Android arayüzü**
+**v1.1.0 · versionCode 11 · Yerel Android arayüzü**
 
 Bağımsız yerel Android uygulamasıdır; ESP32 içinde site ve uygulamada WebView
 yoktur. Hedef Android 15 (API 35), minimum Android 8.0'dır (API 26).
@@ -20,6 +20,7 @@ yoktur. Hedef Android 15 (API 35), minimum Android 8.0'dır (API 26).
 - Mevcut Wi-Fi kanalının yönetim/veri/kontrol çerçeve sayaçları
 - Hassas, dengeli ve sakin algılama profilleri; ayrıntılı eşik/süre ayarları
 - Seçilebilir telefon tonu, ses düzeyi, titreşim ve tekrar bekleme süresi
+- ESP32 üzerindeki pasif buzzer için aç/kapat, şiddet, üç ton profili ve cihazda test
 - Elle yeniden kalibrasyon ve canlı kaynak etiketi
 
 ## Ekran haritası
@@ -53,9 +54,10 @@ ESP32 ağı internet sunmadığı için Android “bağlı kal” sorarsa onayla
 
 ## Alarm ve kapatma
 
-ESP32 kalibrasyon sırasında alarm üretmez. Sonrasında yalnızca adaptif tabana
-göre yaygın ve sürekli RF artışı bildirilir. Uygulama aynı olayı tekrar
-çalmamak için kendi cooldown denetimini de uygular.
+ESP32 kalibrasyon sırasında alarm üretmez. Sonrasında adaptif tabana göre orta,
+yüksek ve aşırı RF doluluk seviyeleri üretir. Yerel pasif buzzer her seviyeyi
+farklı ritimle çalar ve telefon bağlı değilken de çalışır. Uygulama aynı olayı
+tekrar çalmamak için kendi cooldown denetimini de uygular.
 
 Android geri/ana ekran hareketi uygulamayı arka plana alabilir. Tam kapatmak için
 Ayarlar'daki **Ölçümü durdur ve uygulamadan çık** veya bildirimdeki **Durdur** düğmesini kullanın; servis,
@@ -63,6 +65,8 @@ soketler, BLE taraması ve bildirim birlikte sonlandırılır.
 
 **Uyarıyı dene** seçili ses ve açık olan titreşimi dener; titreşim anahtarı anında
 kaydedilir. Android titreşim/rahatsız-etmeyin politikaları geçerlidir.
+**Cihazda dene**, ekrandaki buzzer ayarlarını kaydedip ESP32'ye kısa bir test
+komutu gönderir; bunun için Wi-Fi veya BLE bağlantısı gerekir.
 
 ## Derleme ve bilgisayarda test
 

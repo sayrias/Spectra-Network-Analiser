@@ -3,7 +3,7 @@
 [![Ana rehber](../docs/assets/guide.svg)](../README.md)
 [![Test kapsamı](../docs/assets/tests.svg)](../docs/TEST-NOTLARI.md)
 
-**v1.0.0** için doğrulama araçları. `ui_v*` dosyalarının adları geliştirme
+**v1.1.0** için doğrulama araçları. `ui_v*` dosyalarının adları geliştirme
 dönemindeki test gruplarını belirtir; ürünün güncel sürümü değildir.
 
 `test_docs.py`, göreli belge/görsel bağlantılarını, SVG yapısını, lisansın

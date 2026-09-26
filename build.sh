@@ -45,6 +45,7 @@ source_tests() {
   echo '[OK] Bash sözdizimi'
   bash "$PROJECT_DIR/scripts/test_protocol.sh"
   python3 -B "$PROJECT_DIR/tools/test_wifi_coexistence.py"
+  python3 -B "$PROJECT_DIR/tools/test_local_panel.py"
   python3 -B "$PROJECT_DIR/tools/device_simulator.py" --self-test
   python3 -B "$PROJECT_DIR/tools/test_project_bundle.py"
   python3 -B "$PROJECT_DIR/tools/test_docs.py"

@@ -496,11 +496,16 @@ public final class AnalyzerService extends Service implements BleTransport.Callb
         int hold = intent.getIntExtra("hold", 4000);
         int cooldown = intent.getIntExtra("cooldown", 30000);
         boolean alerts = intent.getBooleanExtra("alerts", true);
+        boolean buzzer = intent.getBooleanExtra("buzzer", true);
+        int buzzerTone = Math.max(0,Math.min(2,intent.getIntExtra("buzzerTone",1)));
+        int buzzerLevel = Math.max(0,Math.min(100,intent.getIntExtra("buzzerLevel",65)));
         preferences.edit().putInt("threshold", threshold).putInt("channels", channels)
                 .putInt("hold", hold).putInt("cooldown", cooldown).putBoolean("alerts", alerts)
                 .putInt("volume", intent.getIntExtra("volume", 70))
                 .putString("tone", intent.getStringExtra("tone"))
-                .putBoolean("vibrate", intent.getBooleanExtra("vibrate", true)).apply();
+                .putBoolean("vibrate", intent.getBooleanExtra("vibrate", true))
+                .putBoolean("buzzer",buzzer).putInt("buzzer_tone",buzzerTone)
+                .putInt("buzzer_level",buzzerLevel).apply();
         sendCurrentSettings();
     }
 
@@ -514,6 +519,9 @@ public final class AnalyzerService extends Service implements BleTransport.Callb
             command.put("cooldown", preferences.getInt("cooldown", 30000));
             command.put("alerts", preferences.getBoolean("alerts", true));
             command.put("samples", preferences.getInt("scan_samples",4));
+            command.put("buzzer",preferences.getBoolean("buzzer",true));
+            command.put("buzzerTone",preferences.getInt("buzzer_tone",1));
+            command.put("buzzerLevel",preferences.getInt("buzzer_level",65));
             sendCommand(command.toString());
         } catch (Exception ignored) {}
     }
@@ -595,7 +603,10 @@ public final class AnalyzerService extends Service implements BleTransport.Callb
         String tone = preferences.getString("tone", "soft");
         AlertTone.play(this, tone == null ? "soft" : tone, preferences.getInt("volume", 70));
         if (preferences.getBoolean("vibrate", true)) AlertHaptics.play(this);
-        String text = "Geniş bant RF değişimi · anomali puanı " + data.optInt("confidence")
+        String severity=data.optString("severity","high");
+        String severityText=severity.equals("extreme")?"Aşırı RF doluluğu"
+                :severity.equals("medium")?"Orta RF doluluğu":"Yüksek RF doluluğu";
+        String text = severityText + " · anomali puanı " + data.optInt("confidence")
                 + " · " + data.optInt("affected") + " kanal";
         getSystemService(NotificationManager.class).notify(2001, alertNotification(text));
     }

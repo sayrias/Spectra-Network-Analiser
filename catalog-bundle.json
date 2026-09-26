@@ -1,0 +1,84 @@
+{
+  "schemaVersion": 1,
+  "projects": [
+    {
+      "name": "SPECTRA 24",
+      "slug": "spectra-network-analyser",
+      "category": "elektronik",
+      "status": "Yayında",
+      "label": "2,4 GHz RF alan gözlem sistemi",
+      "summary": "ESP32 ve nRF24 ile canlı waterfall, Wi-Fi/BLE envanteri ve ayarlanabilir RF alan uyarıları sunan taşınabilir analiz sistemi.",
+      "description": "SPECTRA 24; ESP32-WROOM-32D ve EBYTE E01-ML01DP5 kullanarak 2400–2525 MHz aralığındaki radyo doluluğunu pasif biçimde örnekler. Android uygulaması canlı waterfall, anlık spektrum, Wi-Fi erişim noktaları, BLE reklamları, gözlenen 802.11 trafik sayaçları ve adaptif RF uyarıları sunar. Telefon, cihaza doğrudan Wi-Fi, telefon hotspot'u, yerel ağ veya Bluetooth LE üzerinden bağlanabilir. nRF24 bir SDR olmadığı için ölçümler IQ verisi ya da kesin dBm değil, RPD eşiğinin aşılma oranıdır.",
+      "visual": "pulse",
+      "cover": {
+        "src": "https://raw.githubusercontent.com/sayrias/Spectra-Network-Analiser/main/docs/assets/catalog-logo.svg",
+        "alt": "SPECTRA 24 turuncu spektrum ve radyo alanı logosu",
+        "fit": "contain",
+        "background": "transparent"
+      },
+      "banner": {
+        "src": "https://raw.githubusercontent.com/sayrias/Spectra-Network-Analiser/main/docs/assets/catalog-banner.svg",
+        "position": "center"
+      },
+      "tags": [
+        "ESP32",
+        "nRF24",
+        "2.4 GHz",
+        "Android",
+        "Wi-Fi",
+        "Bluetooth LE",
+        "RF waterfall"
+      ],
+      "features": [
+        {
+          "title": "Canlı RF waterfall",
+          "description": "126 frekans adımını zaman geçmişi ve anlık eğriyle gösterir; tam ekran görünüm daha uzun ölçüm geçmişini incelemeye açar."
+        },
+        {
+          "title": "Çevre envanteri",
+          "description": "Wi-Fi erişim noktalarını, BLE reklamlarını ve dinlenen kanalda gözlenen 802.11 trafik sayaçlarını ayrı görünümlerde sunar."
+        },
+        {
+          "title": "İki bağlantı yolu",
+          "description": "Yüksek kapasiteli spektrum akışı için Wi-Fi TCP/UDP, yedek bağlantı ve yerel komutlar için Bluetooth LE kullanır."
+        },
+        {
+          "title": "Adaptif alan uyarısı",
+          "description": "Kalibre edilmiş ortam tabanına göre geniş ve sürekli enerji değişimini değerlendirir; eşik ve doğrulama süresi uygulamadan ayarlanabilir."
+        }
+      ],
+      "links": {
+        "wiki": "https://wiki.sayrias.com/spectra-network-analyser/v1.0.0/getting-started",
+        "github": "https://github.com/sayrias/Spectra-Network-Analiser"
+      },
+      "resources": {
+        "download": "https://github.com/sayrias/Spectra-Network-Analiser/releases",
+        "github": "https://github.com/sayrias/Spectra-Network-Analiser"
+      },
+      "profile": {
+        "intro": "Android uygulaması ve taşınabilir ESP32 ölçüm düğümüyle 2,4 GHz ortamını anlaşılır bir görünüme dönüştüren RF saha aracı.",
+        "purpose": "Hobi ve laboratuvar ortamlarında 2,4 GHz bandındaki doluluk değişimini, yakın kablosuz yayınları ve geniş bant enerji artışlarını erişilebilir donanımla gözlemlemek.",
+        "currentFocus": "Herkese açık kararlı sürüm v1.0.0; Android 8.0 ve üzeri telefonlarla ESP32-WROOM-32D + E01-ML01DP5 donanımını destekler.",
+        "audience": "Kablosuz ağ ortamını inceleyen üreticiler, elektronik meraklıları, öğrenciler ve izinli laboratuvar ölçümleri yapan geliştiriciler.",
+        "sections": [
+          {
+            "label": "ÖLÇÜM",
+            "title": "RPD tabanlı 2,4 GHz görünümü",
+            "description": "Firmware her kanalı birden fazla kez örnekler, sonuçları 0–100 doluluk değerine dönüştürür ve 126 adımlık tam taramaları telefona aktarır."
+          },
+          {
+            "label": "BAĞLANTI",
+            "title": "Sahaya uygun veri yolları",
+            "description": "Doğrudan SPECTRA ağı hızlı kurulum sağlar; hotspot ve LAN seçenekleri yerel ağ kullanımına, BLE ise Wi-Fi ağını değiştirmeden yedek bağlantıya izin verir."
+          },
+          {
+            "label": "SINIRLAR",
+            "title": "Enerjiyi gösterir, kaynağı kanıtlamaz",
+            "description": "Waterfall kesin güç veya paket içeriği değildir. RF uyarısı enerji değişimini bildirir; tek başına jammer, yön, mesafe ya da cihaz kimliği kanıtı sayılmaz."
+          }
+        ]
+      },
+      "markdown": "## Gereksinimler\n\n| Bileşen | Gereksinim |\n| --- | --- |\n| Telefon | Android 8.0 veya üzeri |\n| Kontrol kartı | ESP32-WROOM-32D |\n| RF modülü | EBYTE E01-ML01DP5 / nRF24L01P + PA/LNA |\n| Derleme | JDK 17, Python 3.10+, Android SDK 35 ve PlatformIO Core |\n\n## Hızlı başlangıç\n\n```bash\n./build.sh doctor\n./build.sh firmware\n./build.sh android\n./build.sh flash /dev/ttyUSB0 --monitor\n```\n\nUygulamayı kurduktan sonra **Bağlantı** ekranından **Hızlı Wi-Fi** veya **Bluetooth LE** seçin. Doğrudan ağın varsayılan adı `SPECTRA-24`, parolası `spectrum24`, cihaz adresi `192.168.4.1` değeridir.\n\n> [!WARNING]\n> E01-ML01DP5 modülünü 5 V ile beslemeyin. Kararlı 3,3 V, ortak toprak ve modül yakınında 100 nF + 10–47 µF kondansatör kullanın.\n\n> [!NOTE]\n> nRF24 bir SDR değildir. Waterfall satırları paket değil tam kanal taramalarıdır; alarm geniş ve sürekli enerji değişimini gösterir, sinyal kaynağını veya niyetini kanıtlamaz.\n\n## Bağlantılar\n\n- [Proje deposu](https://github.com/sayrias/Spectra-Network-Analiser)\n- [Sürümler](https://github.com/sayrias/Spectra-Network-Analiser/releases)\n- [v1.0.0 wiki](https://wiki.sayrias.com/spectra-network-analyser/v1.0.0/getting-started)\n\nKaynak kodu PolyForm Noncommercial 1.0.0 koşullarıyla sunulur; ticari kullanım ayrıca izin gerektirir."
+    }
+  ]
+}

@@ -11,6 +11,7 @@
 #include <esp_wifi.h>
 #include <freertos/FreeRTOS.h>
 #include <freertos/queue.h>
+#include "local_panel.h"
 
 namespace Pins {
 constexpr uint8_t NRF_CE = 4;
@@ -54,6 +55,9 @@ struct AnalyzerSettings {
   uint32_t holdTimeMs = 4000;
   uint32_t cooldownMs = 30000;
   bool alertsEnabled = true;
+  bool buzzerEnabled = true;
+  uint8_t buzzerTone = 1;
+  uint8_t buzzerLevel = 65;
 };
 
 struct WifiNetwork {
@@ -119,6 +123,7 @@ uint8_t spectrum[Config::NRF_CHANNELS] = {};
 float smoothedSpectrum[Config::NRF_CHANNELS] = {};
 float baseline[Config::NRF_CHANNELS] = {};
 bool radioReady = false;
+bool phoneRadiosEnabled = true;
 uint16_t calibrationSweeps = 0;
 uint32_t sweepSequence = 0;
 uint8_t sweepAverage = 0;
@@ -128,6 +133,8 @@ uint8_t affectedChannels = 0;
 uint8_t alarmConfidence = 0;
 bool interferenceCandidate = false;
 bool interferenceAlarm = false;
+LocalPanel::AlertLevel alertLevel = LocalPanel::AlertLevel::Normal;
+LocalPanel::AlertLevel candidateAlertLevel = LocalPanel::AlertLevel::Normal;
 uint32_t candidateSinceMs = 0;
 uint32_t clearSinceMs = 0;
 uint32_t lastAlarmMs = 0;
@@ -137,6 +144,7 @@ volatile uint32_t packetMgmt = 0;
 volatile uint32_t packetData = 0;
 volatile uint32_t packetCtrl = 0;
 volatile int8_t lastPacketRssi = -127;
+uint32_t displayPacketMgmt = 0, displayPacketData = 0, displayPacketCtrl = 0;
 portMUX_TYPE packetMux = portMUX_INITIALIZER_UNLOCKED;
 
 bool wifiScanRunning = false;
@@ -227,6 +235,9 @@ void addSettings(JsonObject target) {
   target["cooldown"] = settings.cooldownMs;
   target["alerts"] = settings.alertsEnabled;
   target["samples"] = scanSamples;
+  target["buzzer"] = settings.buzzerEnabled;
+  target["buzzerTone"] = settings.buzzerTone;
+  target["buzzerLevel"] = settings.buzzerLevel;
 }
 
 String jsonString(const JsonDocument& document) {
@@ -302,8 +313,9 @@ void sendStatus(bool notify) {
   JsonDocument doc;
   doc["type"] = "status";
   doc["device"] = "SPECTRA-24";
-  doc["firmware"] = "1.0.0";
+  doc["firmware"] = "1.1.0";
   doc["radio"] = radioReady;
+  doc["phoneRadios"] = phoneRadiosEnabled;
   doc["calibrating"] = calibrationSweeps < Config::CALIBRATION_SWEEPS;
   doc["calibration"] = calibrationPercent();
   doc["apIp"] = WiFi.softAPIP().toString();
@@ -325,6 +337,8 @@ void sendStatus(bool notify) {
   doc["heapMin"] = ESP.getMinFreeHeap();
   doc["uptime"] = millis();
   doc["trafficCapacity"] = MAX_AIR_DEVICES;
+  doc["alertLevel"] = static_cast<uint8_t>(alertLevel);
+  doc["panel"] = LocalPanel::ready();
   const String value = jsonString(doc);
   if (bleStatusCharacteristic != nullptr) {
     // GATT attributes are limited to 512 bytes; full JSON uses the event channel.
@@ -340,8 +354,9 @@ void sendHello() {
   JsonDocument doc;
   doc["type"] = "hello";
   doc["device"] = "SPECTRA-24";
-  doc["firmware"] = "1.0.0";
+  doc["firmware"] = "1.1.0";
   doc["radio"] = radioReady;
+  doc["phoneRadios"] = phoneRadiosEnabled;
   doc["protocol"] = 2;
   doc["spectrumPort"] = Config::SPECTRUM_PORT;
   doc["discoveryPort"] = Config::DISCOVERY_PORT;
@@ -361,6 +376,9 @@ void saveSettings() {
   preferences.putUInt("cooldown", settings.cooldownMs);
   preferences.putBool("alerts2", settings.alertsEnabled);
   preferences.putUChar("samples3", scanSamples);
+  preferences.putBool("buzzer", settings.buzzerEnabled);
+  preferences.putUChar("buzzTone", settings.buzzerTone);
+  preferences.putUChar("buzzLevel", settings.buzzerLevel);
 }
 
 void loadSettings() {
@@ -371,6 +389,10 @@ void loadSettings() {
   settings.cooldownMs = constrain(preferences.getUInt("cooldown", 30000), 10000UL, 300000UL);
   settings.alertsEnabled = preferences.getBool("alerts2", true);
   scanSamples = constrain(preferences.getUChar("samples3", 4), 4, 12);
+  settings.buzzerEnabled = preferences.getBool("buzzer", true);
+  settings.buzzerTone = constrain(preferences.getUChar("buzzTone", 1), 0, 2);
+  settings.buzzerLevel = constrain(preferences.getUChar("buzzLevel", 65), 0, 100);
+  phoneRadiosEnabled = !preferences.getBool("phoneRfOff", false);
   stationSsid = preferences.isKey("staSsid") ? preferences.getString("staSsid", "") : "";
   stationPassword = preferences.isKey("staPass") ? preferences.getString("staPass", "") : "";
 }
@@ -381,6 +403,7 @@ void resetCalibration() {
   memset(smoothedSpectrum, 0, sizeof(smoothedSpectrum));
   interferenceCandidate = false;
   interferenceAlarm = false;
+  alertLevel = candidateAlertLevel = LocalPanel::AlertLevel::Normal;
   candidateSinceMs = clearSinceMs = 0;
   Serial.println("[RF] Environment calibration restarted");
   sendStatus(true);
@@ -424,17 +447,26 @@ void handleControlLine(const String& line) {
     settings.cooldownMs = constrain(doc["cooldown"] | settings.cooldownMs, 10000UL, 300000UL);
     settings.alertsEnabled = doc["alerts"] | settings.alertsEnabled;
     scanSamples = constrain(doc["samples"] | static_cast<int>(scanSamples), 4, 12);
+    settings.buzzerEnabled = doc["buzzer"] | settings.buzzerEnabled;
+    settings.buzzerTone = constrain(doc["buzzerTone"] | static_cast<int>(settings.buzzerTone), 0, 2);
+    settings.buzzerLevel = constrain(doc["buzzerLevel"] | static_cast<int>(settings.buzzerLevel), 0, 100);
+    LocalPanel::configureBuzzer(settings.buzzerEnabled, settings.buzzerTone, settings.buzzerLevel);
     saveSettings();
     JsonDocument reply;
     reply["type"] = "saved";
     addSettings(reply["settings"].to<JsonObject>());
     sendClientJson(reply);
   } else if (strcmp(action, "alertTest") == 0) {
+    LocalPanel::testBuzzer();
     JsonDocument test;
     test["type"] = "alert"; test["active"] = true; test["test"] = true;
     test["sequence"] = ++alertSequence;
     test["classification"] = "notification_path_test";
     sendClientJson(test);
+  } else if (strcmp(action, "buzzerTest") == 0) {
+    LocalPanel::testBuzzer();
+    JsonDocument reply; reply["type"] = "buzzer_test"; reply["accepted"] = true;
+    sendClientJson(reply);
   } else if (strcmp(action, "scanNames") == 0) {
     nameScanPending = true;
     JsonDocument reply; reply["type"] = "name_scan"; reply["accepted"] = true;
@@ -509,7 +541,7 @@ void serviceDiscovery() {
   JsonDocument doc;
   doc["type"] = "discovery";
   doc["device"] = "SPECTRA-24";
-  doc["firmware"] = "1.0.0";
+  doc["firmware"] = "1.1.0";
   doc["ip"] = WiFi.status() == WL_CONNECTED ? WiFi.localIP().toString() : WiFi.softAPIP().toString();
   doc["apIp"] = WiFi.softAPIP().toString();
   doc["sta"] = WiFi.status() == WL_CONNECTED;
@@ -629,6 +661,9 @@ void sendFlowCounters() {
   observedBytes = airBytes; airBytes = 0;
   packetMgmt = packetData = packetCtrl = 0;
   portEXIT_CRITICAL(&packetMux);
+  displayPacketMgmt = mgmt;
+  displayPacketData = data;
+  displayPacketCtrl = ctrl;
   JsonDocument doc;
   doc["type"] = "flow";
   doc["mgmt"] = mgmt;
@@ -670,7 +705,12 @@ void sendAlertEvent(bool active) {
   doc["peakMHz"] = 2400 + sweepPeakChannel;
   doc["affected"] = affectedChannels;
   doc["confidence"] = alarmConfidence;
-  doc["classification"] = "baseline_wideband_anomaly";
+  doc["level"] = static_cast<uint8_t>(alertLevel);
+  const char* severity = alertLevel == LocalPanel::AlertLevel::Extreme ? "extreme"
+      : alertLevel == LocalPanel::AlertLevel::High ? "high"
+      : alertLevel == LocalPanel::AlertLevel::Medium ? "medium" : "normal";
+  doc["severity"] = severity;
+  doc["classification"] = "adaptive_wideband_occupancy";
   doc["time"] = millis();
   sendClientJson(doc);
 }
@@ -720,28 +760,49 @@ void evaluateInterference() {
 
   affectedChannels = affected;
   const uint8_t averageExcess = static_cast<uint8_t>(excessSum / Config::NRF_CHANNELS);
-  const bool broadBand = occupiedRegions >= 5;
-  interferenceCandidate = settings.alertsEnabled && broadBand &&
-      affected >= settings.minimumAffectedChannels && averageExcess >= 10;
-  alarmConfidence = static_cast<uint8_t>(constrain(
+  const uint8_t mediumChannels = std::max<uint8_t>(8, settings.minimumAffectedChannels * 3 / 5);
+  const uint8_t extremeChannels = std::min<uint8_t>(100,
+      std::max<uint8_t>(45, settings.minimumAffectedChannels * 3 / 2));
+  LocalPanel::AlertLevel detected = LocalPanel::AlertLevel::Normal;
+  if (settings.alertsEnabled && occupiedRegions >= 3 && affected >= mediumChannels && averageExcess >= 6)
+    detected = LocalPanel::AlertLevel::Medium;
+  if (settings.alertsEnabled && occupiedRegions >= 5 &&
+      affected >= settings.minimumAffectedChannels && averageExcess >= 10)
+    detected = LocalPanel::AlertLevel::High;
+  if (settings.alertsEnabled && occupiedRegions >= 7 &&
+      affected >= extremeChannels && averageExcess >= 20)
+    detected = LocalPanel::AlertLevel::Extreme;
+  interferenceCandidate = detected != LocalPanel::AlertLevel::Normal;
+  const uint8_t confidenceScore = static_cast<uint8_t>(constrain(
       35 + affected * 45 / std::max<uint8_t>(1, settings.minimumAffectedChannels) +
       occupiedRegions * 3 + averageExcess, 0, 100));
+  alarmConfidence = detected == LocalPanel::AlertLevel::Normal ? 0 : confidenceScore;
 
   const uint32_t now = millis();
   if (interferenceCandidate) {
     clearSinceMs = 0;
+    if (candidateAlertLevel != detected) {
+      candidateAlertLevel = detected;
+      candidateSinceMs = now;
+    }
     if (candidateSinceMs == 0) candidateSinceMs = now;
-    if (!interferenceAlarm && now - candidateSinceMs >= settings.holdTimeMs &&
-        (lastAlarmMs == 0 || now - lastAlarmMs >= settings.cooldownMs)) {
+    const uint32_t requiredHold = detected == LocalPanel::AlertLevel::Extreme
+        ? std::min<uint32_t>(settings.holdTimeMs, 900)
+        : detected == LocalPanel::AlertLevel::Medium
+        ? std::min<uint32_t>(settings.holdTimeMs, 2000) : settings.holdTimeMs;
+    if (now - candidateSinceMs >= requiredHold &&
+        (!interferenceAlarm || alertLevel != detected)) {
       interferenceAlarm = true;
+      alertLevel = detected;
       lastAlarmMs = now;
       ++alertSequence;
       sendAlertEvent(true);
-      Serial.printf("[ALARM] Baseline-wide anomaly: %u channels, %u regions, confidence %u%%\n",
-                    affected, occupiedRegions, alarmConfidence);
+      Serial.printf("[ALARM] RF level %u: %u channels, %u regions, confidence %u%%\n",
+                    static_cast<unsigned>(alertLevel), affected, occupiedRegions, alarmConfidence);
     }
   } else {
     candidateSinceMs = 0;
+    candidateAlertLevel = LocalPanel::AlertLevel::Normal;
     for (uint8_t channel = 0; channel < Config::NRF_CHANNELS; ++channel) {
       const float alpha = smoothedSpectrum[channel] < baseline[channel] ? 0.035f : 0.0025f;
       baseline[channel] += (smoothedSpectrum[channel] - baseline[channel]) * alpha;
@@ -750,6 +811,7 @@ void evaluateInterference() {
       if (clearSinceMs == 0) clearSinceMs = now;
       if (now - clearSinceMs >= 2500) {
         interferenceAlarm = false;
+        alertLevel = LocalPanel::AlertLevel::Normal;
         clearSinceMs = 0;
         sendAlertEvent(false);
       }
@@ -1117,11 +1179,15 @@ void printStartupBanner() {
   Serial.println("================================================");
   Serial.println(" SPECTRA-24 | Live 2.4 GHz Network Field Tool");
   Serial.println("================================================");
-  Serial.printf(" Direct Wi-Fi : %s / %s / %s\n", Config::AP_SSID, Config::AP_PASSWORD,
-                WiFi.softAPIP().toString().c_str());
-  Serial.printf(" BLE service  : %s\n", Config::BLE_SERVICE_UUID);
-  Serial.printf(" TCP/UDP      : %u / %u | discovery %u\n", Config::CONTROL_PORT,
-                Config::SPECTRUM_PORT, Config::DISCOVERY_PORT);
+  if (phoneRadiosEnabled) {
+    Serial.printf(" Direct Wi-Fi : %s / %s / %s\n", Config::AP_SSID, Config::AP_PASSWORD,
+                  WiFi.softAPIP().toString().c_str());
+    Serial.printf(" BLE service  : %s\n", Config::BLE_SERVICE_UUID);
+    Serial.printf(" TCP/UDP      : %u / %u | discovery %u\n", Config::CONTROL_PORT,
+                  Config::SPECTRUM_PORT, Config::DISCOVERY_PORT);
+  } else {
+    Serial.println(" Phone radios : OFF | clean local RF mode");
+  }
   Serial.printf(" nRF24        : %s | calibration: %u sweeps\n",
                 radioReady ? "READY" : "NOT FOUND", Config::CALIBRATION_SWEEPS);
   Serial.println(" HTTP          : DISABLED");
@@ -1134,52 +1200,103 @@ void setup() {
   Serial.begin(115200);
   delay(250);
   loadSettings();
+  LocalPanel::begin();
+  LocalPanel::configureBuzzer(settings.buzzerEnabled, settings.buzzerTone, settings.buzzerLevel);
   radioReady = initializeRadio();
-  initializeBle();
 
   WiFi.persistent(false);
-  WiFi.mode(WIFI_AP_STA);
-  // Required for Wi-Fi/BLE coexistence on this ESP32 + Arduino 2.0.17 stack.
-  // Arduino returns false even when the requested mode is already selected.
-  WiFi.setSleep(WIFI_PS_MIN_MODEM);
-  wifi_ps_type_t powerPolicy = WIFI_PS_NONE;
-  wifiPowerSave = esp_wifi_get_ps(&powerPolicy) == ESP_OK && powerPolicy == WIFI_PS_MIN_MODEM;
-  if (!wifiPowerSave) Serial.println("[WiFi] ERROR: coexistence power-save policy not active");
-  WiFi.softAPConfig(IPAddress(192, 168, 4, 1), IPAddress(192, 168, 4, 1),
-                    IPAddress(255, 255, 255, 0));
-  WiFi.softAP(Config::AP_SSID, Config::AP_PASSWORD, Config::AP_CHANNEL, false, 4);
-  if (!stationSsid.isEmpty()) connectStation(stationSsid, stationPassword, false);
-  controlServer.begin();
-  controlServer.setNoDelay(true);
-  spectrumUdp.begin(Config::SPECTRUM_PORT);
-  discoveryUdp.begin(Config::DISCOVERY_PORT);
-  enableWifiMetadataCapture();
-
-  lastWifiScanMs = millis() - Config::WIFI_SCAN_INTERVAL_MS + 3500;
-  lastBleScanMs = millis() - Config::BLE_SCAN_INTERVAL_MS + 6000;
   controlInput.reserve(1024);
-  sendStatus(false);
+  if (phoneRadiosEnabled) {
+    initializeBle();
+    WiFi.mode(WIFI_AP_STA);
+    // Required for Wi-Fi/BLE coexistence on this ESP32 + Arduino 2.0.17 stack.
+    // Arduino returns false even when the requested mode is already selected.
+    WiFi.setSleep(WIFI_PS_MIN_MODEM);
+    wifi_ps_type_t powerPolicy = WIFI_PS_NONE;
+    wifiPowerSave = esp_wifi_get_ps(&powerPolicy) == ESP_OK && powerPolicy == WIFI_PS_MIN_MODEM;
+    if (!wifiPowerSave) Serial.println("[WiFi] ERROR: coexistence power-save policy not active");
+    WiFi.softAPConfig(IPAddress(192, 168, 4, 1), IPAddress(192, 168, 4, 1),
+                      IPAddress(255, 255, 255, 0));
+    WiFi.softAP(Config::AP_SSID, Config::AP_PASSWORD, Config::AP_CHANNEL, false, 4);
+    if (!stationSsid.isEmpty()) connectStation(stationSsid, stationPassword, false);
+    controlServer.begin();
+    controlServer.setNoDelay(true);
+    spectrumUdp.begin(Config::SPECTRUM_PORT);
+    discoveryUdp.begin(Config::DISCOVERY_PORT);
+    enableWifiMetadataCapture();
+    lastWifiScanMs = millis() - Config::WIFI_SCAN_INTERVAL_MS + 3500;
+    lastBleScanMs = millis() - Config::BLE_SCAN_INTERVAL_MS + 6000;
+    sendStatus(false);
+  } else {
+    WiFi.mode(WIFI_OFF);
+    wifiPowerSave = false;
+    Serial.println("[LOCAL] Wi-Fi AP/STA and Bluetooth LE are disabled");
+  }
   printStartupBanner();
   sweepQueue = xQueueCreate(1, sizeof(RawSweep));
   if (radioReady && sweepQueue) xTaskCreatePinnedToCore(spectrumTask, "rf-sampler", 4096, nullptr, 1, nullptr, 1);
 }
 
 void loop() {
-  serviceControlConnection();
-  // Keep WIFI_PS_MIN_MODEM: BLE and Wi-Fi share the ESP32 radio.
-  // Never switch to WIFI_PS_NONE when a TCP client connects.
-  serviceBleCommands();
-  serviceBleOutput();
-  serviceDiscovery();
-  serviceStation();
+  if (phoneRadiosEnabled) {
+    serviceControlConnection();
+    // Keep WIFI_PS_MIN_MODEM: BLE and Wi-Fi share the ESP32 radio.
+    // Never switch to WIFI_PS_NONE when a TCP client connects.
+    serviceBleCommands();
+    serviceBleOutput();
+    serviceDiscovery();
+    serviceStation();
+  }
   runSpectrumScanner();
-  serviceWifiScanner();
-  serviceBleScanner();
-  sendFlowCounters();
-  broadcastAirDevices();
+  if (phoneRadiosEnabled) {
+    serviceWifiScanner();
+    serviceBleScanner();
+    sendFlowCounters();
+    broadcastAirDevices();
+  }
+
+  uint8_t visibleAirDevices = 0;
+  const uint32_t panelNow = millis();
+  portENTER_CRITICAL(&packetMux);
+  for (uint8_t i = 0; i < MAX_AIR_DEVICES; ++i)
+    if (airDevices[i].used && panelNow - airDevices[i].lastMs <= 60000) ++visibleAirDevices;
+  const int8_t panelRssi = lastPacketRssi;
+  portEXIT_CRITICAL(&packetMux);
+  LocalPanel::Snapshot panelSnapshot;
+  panelSnapshot.spectrum = spectrum;
+  panelSnapshot.average = sweepAverage;
+  panelSnapshot.peak = sweepPeak;
+  panelSnapshot.peakChannel = sweepPeakChannel;
+  panelSnapshot.affectedChannels = affectedChannels;
+  panelSnapshot.confidence = alarmConfidence;
+  panelSnapshot.calibration = calibrationPercent();
+  panelSnapshot.sweepSequence = sweepSequence;
+  panelSnapshot.calibrating = calibrationSweeps < Config::CALIBRATION_SWEEPS;
+  panelSnapshot.radioReady = radioReady;
+  panelSnapshot.phoneRadiosEnabled = phoneRadiosEnabled;
+  panelSnapshot.phoneConnected = phoneClient.connected() || bleClientConnected;
+  panelSnapshot.managementFrames = displayPacketMgmt;
+  panelSnapshot.dataFrames = displayPacketData;
+  panelSnapshot.controlFrames = displayPacketCtrl;
+  panelSnapshot.wifiDevices = std::min<size_t>(255, wifiNetworks.size());
+  portENTER_CRITICAL(&bleMux);
+  panelSnapshot.bleDevices = bleDeviceCount;
+  portEXIT_CRITICAL(&bleMux);
+  panelSnapshot.airDevices = visibleAirDevices;
+  panelSnapshot.lastRssi = panelRssi;
+  panelSnapshot.alert = alertLevel;
+  LocalPanel::service(panelSnapshot);
+  if (LocalPanel::takePhoneRadioToggleRequest()) {
+    const bool disableRadios = phoneRadiosEnabled;
+    preferences.putBool("phoneRfOff", disableRadios);
+    Serial.printf("[LOCAL] Phone radios will restart %s\n",
+                  disableRadios ? "OFF" : "ON");
+    delay(350);
+    ESP.restart();
+  }
 
   static uint32_t lastStatusMs = 0;
-  if (millis() - lastStatusMs >= 3000) {
+  if (phoneRadiosEnabled && millis() - lastStatusMs >= 3000) {
     lastStatusMs = millis();
     sendStatus(true);
   }
