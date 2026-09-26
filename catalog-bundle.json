@@ -11,13 +11,13 @@
       "description": "SPECTRA 24; ESP32-WROOM-32D ve EBYTE E01-ML01DP5 kullanarak 2400–2525 MHz aralığındaki radyo doluluğunu pasif biçimde örnekler. Android uygulaması canlı waterfall, anlık spektrum, Wi-Fi erişim noktaları, BLE reklamları, gözlenen 802.11 trafik sayaçları ve adaptif RF uyarıları sunar. Telefon, cihaza doğrudan Wi-Fi, telefon hotspot'u, yerel ağ veya Bluetooth LE üzerinden bağlanabilir. nRF24 bir SDR olmadığı için ölçümler IQ verisi ya da kesin dBm değil, RPD eşiğinin aşılma oranıdır.",
       "visual": "pulse",
       "cover": {
-        "src": "https://raw.githubusercontent.com/sayrias/Spectra-Network-Analiser/main/docs/assets/catalog-logo.svg",
+        "src": "https://raw.githubusercontent.com/sayrias/Spectra-Network-Analiser/main/docs/assets/catalog-logo.png",
         "alt": "SPECTRA 24 turuncu spektrum ve radyo alanı logosu",
         "fit": "contain",
         "background": "transparent"
       },
       "banner": {
-        "src": "https://raw.githubusercontent.com/sayrias/Spectra-Network-Analiser/main/docs/assets/catalog-banner.svg",
+        "src": "https://raw.githubusercontent.com/sayrias/Spectra-Network-Analiser/main/docs/assets/catalog-banner.gif",
         "position": "center"
       },
       "tags": [
